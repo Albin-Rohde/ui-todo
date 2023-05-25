@@ -1,6 +1,6 @@
 import React from 'react';
 import {Box} from '@mui/material';
-import LoginForm from './LoginForm';
+import SignUpForm from './SignUpForm';
 import AppName from "../../components/AppName";
 
 const styles = {
@@ -16,15 +16,15 @@ const styles = {
   },
 };
 
-function Login() {
+function Signup() {
   return (
     <Box sx={styles.container}>
       <Box>
-        <AppName animate styles={{marginBottom: '5vh', textAlign: 'center'}}/>
-        <LoginForm/>
+        <AppName styles={{marginBottom: '5vh', textAlign: 'center'}}/>
+        <SignUpForm/>
       </Box>
     </Box>
   );
 }
 
-export default Login;
+export default Signup;
