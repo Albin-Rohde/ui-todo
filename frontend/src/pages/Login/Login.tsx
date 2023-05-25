@@ -1,7 +1,10 @@
+import { Box } from '@mui/material';
 import React from 'react';
-import {Box} from '@mui/material';
+
+import AppName from '../../components/AppName';
+
 import LoginForm from './LoginForm';
-import AppName from "../../components/AppName";
+
 
 const styles = {
   container: {
@@ -20,7 +23,7 @@ function Login() {
   return (
     <Box sx={styles.container}>
       <Box>
-        <AppName animate styles={{marginBottom: '5vh', textAlign: 'center'}}/>
+        <AppName animate styles={{ marginBottom: '5vh', textAlign: 'center' }}/>
         <LoginForm/>
       </Box>
     </Box>

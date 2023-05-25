@@ -1,9 +1,9 @@
-import React, {useState} from 'react';
-import {styled, Typography} from '@mui/material';
-import {TypeAnimation} from 'react-type-animation';
+import { styled, Typography } from '@mui/material';
+import React, { useState } from 'react';
+import { TypeAnimation } from 'react-type-animation';
 
 
-const AppName = styled(Typography)(({theme, style}) => ({
+const AppName = styled(Typography)(({ style }) => ({
   fontSize: '2.5rem',
   fontWeight: 'bold',
   color: '#007afe',
@@ -15,7 +15,7 @@ interface AppNameProps {
   animate?: boolean;
 }
 
-const AppNameComponent: React.FC<AppNameProps> = ({styles, animate}) => {
+const AppNameComponent: React.FC<AppNameProps> = ({ styles, animate }) => {
   const [animationFinished, setAnimationFinished] = useState<boolean>(false);
 
   return <AppName style={styles}>

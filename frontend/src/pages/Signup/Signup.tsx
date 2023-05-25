@@ -1,7 +1,10 @@
+import { Box } from '@mui/material';
 import React from 'react';
-import {Box} from '@mui/material';
+
+import AppName from '../../components/AppName';
+
 import SignUpForm from './SignUpForm';
-import AppName from "../../components/AppName";
+
 
 const styles = {
   container: {
@@ -20,7 +23,7 @@ function Signup() {
   return (
     <Box sx={styles.container}>
       <Box>
-        <AppName styles={{marginBottom: '5vh', textAlign: 'center'}}/>
+        <AppName styles={{ marginBottom: '5vh', textAlign: 'center' }}/>
         <SignUpForm/>
       </Box>
     </Box>

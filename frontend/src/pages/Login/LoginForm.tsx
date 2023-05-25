@@ -1,11 +1,12 @@
+import { Box, Link as MuiLink, TextField, Typography } from '@mui/material';
+import { styled } from '@mui/system';
 import React from 'react';
-import {Box, Link as MuiLink, TextField, Typography} from '@mui/material';
-import {styled} from '@mui/system';
-import PrimaryButton from "../../components/PrimaryButton";
-import {Link as RouterLink} from 'react-router-dom';
-import InforMessageBox from "../../components/InforMessageBox";
+import { Link as RouterLink } from 'react-router-dom';
 
-const Container = styled(Box)(({theme}) => ({
+import InforMessageBox from '../../components/InforMessageBox';
+import PrimaryButton from '../../components/PrimaryButton';
+
+const Container = styled(Box)(() => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -31,7 +32,7 @@ function LoginForm() {
       </Box>
       <InforMessageBox>
         <Typography variant="body2">
-          Don't have an account?{' '}
+          {'Don\'t have an account? '}
           <MuiLink to="/signup" component={RouterLink} underline="hover">
             Create one
           </MuiLink>.
