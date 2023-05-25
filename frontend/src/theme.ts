@@ -18,6 +18,16 @@ const theme = createTheme({
   typography: {
     fontFamily: 'Roboto, Arial, sans-serif',
   },
+  components: {
+    MuiLink: {
+      styleOverrides: {
+        root: {
+          color: '#0067c7',
+        },
+      },
+    },
+  },
 });
+
 
 export default theme;
