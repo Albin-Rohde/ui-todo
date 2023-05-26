@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  db:
+    container_name: ui-todo.db
+    image: postgres
+    restart: unless-stopped
+    networks:
+      - local
+    ports:
+      - 5432:5432
+    env_file:
+      - './backend/.env'
+
+networks:
+  local:
+    driver: bridge
