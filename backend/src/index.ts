@@ -1,17 +1,21 @@
 import "reflect-metadata";
-import express from "express";
 import * as dotenv from "dotenv";
+import { UserController } from "./user/controller";
 import { AppDataSource } from "./data-source";
+import { createExpressServer } from "routing-controllers";
+import { Response } from "express";
 
 dotenv.config();
 
-const app = express();
-
 AppDataSource.initialize().then(async () => {
   const port = process.env.PORT || 5000;
-  app.get("/", (req, res) => {
-    res.send("Hello World!")
-  })
+
+  const app = createExpressServer({
+    controllers: [UserController],
+  });
+
+  app.get("/health", (req: Request, res: Response) => res.json({ "status": "ok" }));
+
   app.listen(port, () => {
     console.log(`Server is running on port ${port}.`);
   });
