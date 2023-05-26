@@ -1,24 +1,18 @@
 import "reflect-metadata";
 import express from "express";
-import {createConnection} from "typeorm";
 import * as dotenv from "dotenv";
+import { AppDataSource } from "./data-source";
 
 dotenv.config();
 
 const app = express();
 
-createConnection()
-  .then(async () => {
-    console.log("Connected to the database.");
-
-    app.get("/", (req, res) => {
-      res.send("Hello World!")
-    })
-
-    const port = process.env.PORT || 5000;
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}.`);
-    });
+AppDataSource.initialize().then(async () => {
+  const port = process.env.PORT || 5000;
+  app.get("/", (req, res) => {
+    res.send("Hello World!")
   })
-  .catch((error) => console.log(error));
-
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}.`);
+  });
+});
