@@ -1,9 +1,9 @@
-import {styled} from "@mui/system";
-import {Box, ButtonProps} from "@mui/material";
-import React from "react";
+import { Box, ButtonProps } from '@mui/material';
+import { styled } from '@mui/system';
+import React from 'react';
 
 
-const CustomBox = styled(Box)(({theme}) => ({
+const CustomBox = styled(Box)(({ theme }) => ({
   backgroundColor: '#f5f5f5',
   padding: theme.spacing(2),
   borderRadius: theme.shape.borderRadius,
@@ -16,7 +16,7 @@ interface PrimaryButtonProps extends ButtonProps {
   children: React.ReactNode;
 }
 
-const InforMessageBox: React.FC<PrimaryButtonProps> = ({children}) => {
+const InforMessageBox: React.FC<PrimaryButtonProps> = ({ children }) => {
   return (
     <CustomBox>
       {children}

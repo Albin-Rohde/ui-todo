@@ -1,25 +1,30 @@
-import {createBrowserRouter} from "react-router-dom";
-import LandingPage from "./pages/LandingPage/LandingPage";
-import Dashboard from "./pages/Dashboard/Dashboard";
-import Login from "./pages/Login/Login";
-import * as React from "react";
-import Signup from "./pages/Signup/Signup";
+import * as React from 'react';
+import { useRoutes } from 'react-router-dom';
 
-export const router = createBrowserRouter([
+import Dashboard from './pages/Dashboard/Dashboard';
+import LandingPage from './pages/LandingPage/LandingPage';
+import Login from './pages/Login/Login';
+import Signup from './pages/Signup/Signup';
+
+export const routes = [
   {
-    path: "/",
+    path: '/',
     element: <LandingPage/>,
   },
   {
-    path: "/dashboard",
+    path: '/dashboard',
     element: <Dashboard/>,
   },
   {
-    path: "/login",
+    path: '/login',
     element: <Login/>,
   },
   {
-    path: "/signup",
+    path: '/signup',
     element: <Signup/>,
   }
-]);
+];
+
+export const Router = (): React.ReactElement | null => {
+  return useRoutes(routes);
+}

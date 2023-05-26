@@ -1,11 +1,12 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom/client";
-import {RouterProvider,} from "react-router-dom";
-import "./index.css";
-import reportWebVitals from "./reportWebVitals";
-import {ThemeProvider} from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom/client';
+import { RouterProvider } from 'react-router-dom';
+
+import './index.css';
+import reportWebVitals from './reportWebVitals';
+import { router } from './router';
 import theme from './theme';
-import {router} from "./router";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
