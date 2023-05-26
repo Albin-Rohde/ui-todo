@@ -23,6 +23,7 @@ module.exports = {
     "dist/",
     "jest.config.js",
     ".eslintrc.js",
+    "src/migrations/*.ts"
   ],
   rules: {
     quotes: ["error", "double"]
