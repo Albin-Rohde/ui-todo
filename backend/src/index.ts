@@ -3,18 +3,27 @@ import * as dotenv from "dotenv";
 import { UserController } from "./user/controller";
 import { db } from "./data-source";
 import { createExpressServer } from "routing-controllers";
-import { Response } from "express";
+import cors from "cors";
+import bodyParser from "body-parser";
+import express, { Request, Response } from "express";
 
 dotenv.config();
 
 db.initialize().then(async () => {
   const port = process.env.PORT || 5000;
 
-  const app = createExpressServer({
+  const app = express();
+  app.use(cors()); // Enable CORS middleware
+  app.use(bodyParser.urlencoded({ extended: false }));
+  app.use(bodyParser.json());
+
+  app.get("/health", (req: Request, res: Response) => res.json({ "status": "ok" }));
+  const server = createExpressServer({
     controllers: [UserController],
   });
 
-  app.get("/health", (req: Request, res: Response) => res.json({ "status": "ok" }));
+
+  app.use("/api", server);
 
   app.listen(port, () => {
     console.log(`Server is running on port ${port}.`);
