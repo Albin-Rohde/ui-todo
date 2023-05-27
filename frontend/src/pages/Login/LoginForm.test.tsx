@@ -1,12 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
-import SignUpForm from '../Signup/SignUpForm';
+import LoginForm from './LoginForm';
 
-test('renders sign in form with email, username, password fields and sign up button', () => {
+test('renders login form with email, username, password fields and sign in button', () => {
   render(
     <MemoryRouter>
-      <SignUpForm/>
+      <LoginForm/>
     </MemoryRouter>
   );
 

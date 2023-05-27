@@ -16,9 +16,9 @@ test('renders sign up form with email, username, password fields and sign up but
   const usernameField = screen.getByLabelText(/Username/i);
   expect(usernameField).toBeInTheDocument();
 
-  const passwordField = screen.getByLabelText(/Password/i);
+  const passwordField = screen.getByLabelText(/Password/);
   expect(passwordField).toBeInTheDocument();
 
-  const signInButton = screen.getByRole('button', { name: /Sign in/i });
+  const signInButton = screen.getByRole('button', { name: /Sign up/i });
   expect(signInButton).toBeInTheDocument();
 });
