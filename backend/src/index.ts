@@ -1,13 +1,13 @@
 import "reflect-metadata";
 import * as dotenv from "dotenv";
 import { UserController } from "./user/controller";
-import { AppDataSource } from "./data-source";
+import { db } from "./data-source";
 import { createExpressServer } from "routing-controllers";
 import { Response } from "express";
 
 dotenv.config();
 
-AppDataSource.initialize().then(async () => {
+db.initialize().then(async () => {
   const port = process.env.PORT || 5000;
 
   const app = createExpressServer({

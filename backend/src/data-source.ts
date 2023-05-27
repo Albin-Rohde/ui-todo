@@ -6,7 +6,7 @@ import { AddUserTable1685139437466 } from "./migrations/1685139437466-AddUserTab
 
 dotenv.config();
 
-export const AppDataSource = new DataSource({
+export const db = new DataSource({
   type: "postgres",
   host: process.env.POSTGRES_HOST,
   port: Number(process.env.POSTGRES_PORT),
