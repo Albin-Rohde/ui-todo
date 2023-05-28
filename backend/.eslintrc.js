@@ -26,6 +26,7 @@ module.exports = {
     "src/migrations/*.ts"
   ],
   rules: {
-    quotes: ["error", "double"]
+    quotes: ["error", "double"],
+    "object-curly-spacing": ['error', 'always'],
   }
 }

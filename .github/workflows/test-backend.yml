@@ -1,4 +1,4 @@
-name: Lint-backend
+name: Test-backend
 
 on: [ pull_request ]
 
@@ -18,6 +18,6 @@ jobs:
         run: npm ci
         working-directory: ./backend
 
-      - name: Run ESLint
-        run: npm run lint
+      - name: Run Tests
+        run: npm run test
         working-directory: ./backend
