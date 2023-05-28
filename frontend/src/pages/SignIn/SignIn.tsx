@@ -3,7 +3,7 @@ import React from 'react';
 
 import AppName from '../../components/AppName';
 
-import LoginForm from './LoginForm';
+import SignInForm from './SignInForm';
 
 
 const styles = {
@@ -19,15 +19,15 @@ const styles = {
   },
 };
 
-function Login() {
+function SignIn() {
   return (
     <Box sx={styles.container}>
       <Box>
         <AppName animate styles={{ marginBottom: '5vh', textAlign: 'center' }}/>
-        <LoginForm/>
+        <SignInForm/>
       </Box>
     </Box>
   );
 }
 
-export default Login;
+export default SignIn;

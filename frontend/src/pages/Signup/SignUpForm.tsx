@@ -154,7 +154,7 @@ function SignUpForm() {
       <InforMessageBox>
         <Typography variant="body2">
           Already have an account? {' '}
-          <MuiLink to="/login" component={RouterLink} underline="hover">
+          <MuiLink to="/signin" component={RouterLink} underline="hover">
             Sign in
           </MuiLink>.
         </Typography>

@@ -14,7 +14,7 @@ const Container = styled(Box)(() => ({
   mt: 2,
 }));
 
-function LoginForm() {
+function SignInForm() {
   return (
     <Container>
       <Box component="form" sx={{
@@ -43,4 +43,4 @@ function LoginForm() {
   );
 }
 
-export default LoginForm;
+export default SignInForm;

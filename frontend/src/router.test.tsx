@@ -6,7 +6,7 @@ import { Router } from './router';
 describe('correctly renders component based on route', () => {
   it('renders login page when path is "/login"', () => {
     render(
-      <MemoryRouter initialEntries={['/login']}>
+      <MemoryRouter initialEntries={['/signin']}>
         <Router/>
       </MemoryRouter>
     );
