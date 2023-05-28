@@ -23,8 +23,10 @@ module.exports = {
     "dist/",
     "jest.config.js",
     ".eslintrc.js",
+    "src/migrations/*.ts"
   ],
   rules: {
-    quotes: ["error", "double"]
+    quotes: ["error", "double"],
+    "object-curly-spacing": ['error', 'always'],
   }
 }
