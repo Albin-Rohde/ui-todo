@@ -1,6 +1,7 @@
 import { UserController } from "../controller";
 import { UserService } from "../service";
 import { UserDAO } from "../dao";
+import { ExpressReqMock } from "../../test-utils/mocks";
 
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -17,7 +18,7 @@ describe("UserController", () => {
 
   describe("Create User", () => {
     it("Should return \"ok\" if all goes well", async () => {
-      const result = await userController.createUser({
+      const result = await userController.createUser(ExpressReqMock, {
         username: "test",
         email: "test@example.com",
         password: "testPassword",
@@ -31,7 +32,7 @@ describe("UserController", () => {
     });
 
     it("Should return a ValidationError if required fields are not supplied", async () => {
-      const result = await userController.createUser({
+      const result = await userController.createUser(ExpressReqMock, {
         username: "",
         email: "test@example.com",
         password: "testPassword",
@@ -39,7 +40,7 @@ describe("UserController", () => {
       });
       expect(result.err?.name).toEqual("ValidationError");
 
-      const result2 = await userController.createUser({
+      const result2 = await userController.createUser(ExpressReqMock, {
         username: "test",
         email: "",
         password: "testPassword",
@@ -47,7 +48,7 @@ describe("UserController", () => {
       });
       expect(result2.err?.name).toEqual("ValidationError");
 
-      const result3 = await userController.createUser({
+      const result3 = await userController.createUser(ExpressReqMock, {
         username: "test",
         email: "test@example.com",
         password: "",
@@ -57,7 +58,7 @@ describe("UserController", () => {
     });
 
     it("Should return a ValidationError if the email is not valid", async () => {
-      const result = await userController.createUser({
+      const result = await userController.createUser(ExpressReqMock, {
         username: "test",
         email: "test.not-an-email.com",
         password: "testPassword",
@@ -67,7 +68,7 @@ describe("UserController", () => {
     });
 
     it("Should return a ValidationError if the passwords don't match", async () => {
-      const result = await userController.createUser({
+      const result = await userController.createUser(ExpressReqMock, {
         username: "test",
         email: "test@example.com",
         password: "testPassword",
