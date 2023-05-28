@@ -6,6 +6,8 @@ import { AddUserTable1685139437466 } from "./migrations/1685139437466-AddUserTab
 
 dotenv.config();
 
+export const entities = [User];
+
 export const db = new DataSource({
   type: "postgres",
   host: process.env.POSTGRES_HOST,
@@ -13,14 +15,14 @@ export const db = new DataSource({
   username: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
-  synchronize: true,
+  synchronize: false,
   logging: false,
-  entities: [User],
+  entities: entities,
   subscribers: [],
   migrations: [
     AddUserTable1685139437466
   ],
-})
+});
 
 /*
 Create migration
