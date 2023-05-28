@@ -12,6 +12,15 @@ services:
     env_file:
       - './backend/.env'
 
+  redis:
+    container_name: ui-todo.redis
+    image: "redis:latest"
+    command: redis-server
+    networks:
+      - local
+    ports:
+      - 6379:6379
+
 networks:
   local:
     driver: bridge
