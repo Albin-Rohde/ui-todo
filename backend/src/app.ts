@@ -9,11 +9,9 @@ import express, { Application, Request, Response } from "express";
 
 dotenv.config();
 
-export const init = async (portNumber: number | undefined): Promise<Application> => {
-  return new Promise((resolve) => {
+export const getExpressApp = async (): Promise<Application> => {
+  return new Promise<Application>((resolve, reject) => {
     db.initialize().then(async () => {
-      const port = portNumber || process.env.PORT || 5000;
-
       const app = express();
       app.use(cors()); // Enable CORS middleware
       app.use(bodyParser.urlencoded({ extended: false }));
@@ -23,14 +21,8 @@ export const init = async (portNumber: number | undefined): Promise<Application>
       const server = createExpressServer({
         controllers: [UserController],
       });
-
-
       app.use("/api", server);
-
-      app.listen(port, () => {
-        console.log(`Server is running on port ${port}.`);
-        resolve(app);
-      });
+      resolve(app);
     });
   });
 }

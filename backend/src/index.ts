@@ -1,3 +1,11 @@
-import { init } from "./app";
+import { getExpressApp } from "./app";
 
-init(undefined);
+const start = async () => {
+  const app = await getExpressApp();
+  const port = process.env.PORT || 5000;
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}.`);
+  });
+}
+
+start();
