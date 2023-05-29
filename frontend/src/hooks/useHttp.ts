@@ -3,24 +3,29 @@ import { useState } from 'react';
 
 import { RestResponse } from '../types';
 
-type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
-
 const baseUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000/api';
+
+interface SendRequestParams {
+  path: string;
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  body?: any;
+}
 
 const useHttp = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<boolean>(false);
 
-  const sendRequest = async <T = undefined>(path: string, method: Method, body?: any): Promise<RestResponse<T | undefined>> => {
+  const sendRequest = async <T = undefined>(params: SendRequestParams): Promise<RestResponse<T | undefined>> => {
     setLoading(true);
     try {
       const { data } = await axios<RestResponse<T>>({
-        url: baseUrl + path,
-        method,
+        withCredentials: true,
+        url: baseUrl + params.path,
+        method: params.method,
         headers: {
           'Content-Type': 'application/json',
         },
-        data: body
+        data: params.body || {},
       });
       setLoading(false);
       return data;

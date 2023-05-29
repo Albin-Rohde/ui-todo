@@ -3,10 +3,15 @@ import { MemoryRouter } from 'react-router-dom';
 
 import { Router } from './router';
 
-describe('correctly renders component based on route', () => {
-  it('renders login page when path is "/login"', () => {
+jest.mock('./hooks/useAuth', () => ({
+  useAuth: () => ({ loading: false }),
+}));
+
+describe('correctly renders component based on route and session state', () => {
+
+  it('renders signin page when path is "/signin"', () => {
     render(
-      <MemoryRouter initialEntries={['/login']}>
+      <MemoryRouter initialEntries={['/signin']}>
         <Router/>
       </MemoryRouter>
     );

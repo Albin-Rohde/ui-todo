@@ -1,7 +1,8 @@
 import { UserController } from "../controller";
 import { UserService } from "../service";
 import { UserDAO } from "../dao";
-
+import { ExpressReqMock } from "../../test-utils/mocks";
+import { generateCreatePayload, generateSignInPayload } from "../../test-utils/payload";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -9,71 +10,102 @@ const mockedUserService: jest.Mocked<UserService> = {
   userDAO: jest.mocked(UserDAO) as unknown as UserDAO,
   getUserById: jest.fn(),
   createUser: jest.fn(),
-  hashPassword: jest.fn(),
+  signIn: jest.fn(),
 }
 
 describe("UserController", () => {
   const userController: UserController = new UserController(mockedUserService);
 
+  afterEach(() => {
+    mockedUserService.getUserById.mockClear();
+    mockedUserService.createUser.mockClear();
+    mockedUserService.signIn.mockClear();
+  });
+
   describe("Create User", () => {
     it("Should return \"ok\" if all goes well", async () => {
-      const result = await userController.createUser({
-        username: "test",
-        email: "test@example.com",
-        password: "testPassword",
-        passwordConfirmation: "testPassword",
-      });
+      const payload = generateCreatePayload();
+      const result = await userController.createUser(ExpressReqMock, payload);
       expect(result).toEqual({
         ok: true,
         err: null,
         data: "ok",
       });
+      expect(mockedUserService.createUser).toHaveBeenCalledWith(payload);
     });
 
-    it("Should return a ValidationError if required fields are not supplied", async () => {
-      const result = await userController.createUser({
-        username: "",
-        email: "test@example.com",
-        password: "testPassword",
-        passwordConfirmation: "testPassword2",
+    describe("Should return a ValidationError if required fields are not supplied", () => {
+      it("No username", async () => {
+        const payload = generateCreatePayload();
+        payload.username = "";
+        const result = await userController.createUser(ExpressReqMock, payload);
+        expect(result.err?.name).toEqual("ValidationError");
+        expect(mockedUserService.createUser).not.toHaveBeenCalled();
       });
-      expect(result.err?.name).toEqual("ValidationError");
 
-      const result2 = await userController.createUser({
-        username: "test",
-        email: "",
-        password: "testPassword",
-        passwordConfirmation: "testPassword2",
+      it("No email", async () => {
+        const payload = generateCreatePayload();
+        payload.email = "";
+        const result = await userController.createUser(ExpressReqMock, payload);
+        expect(result.err?.name).toEqual("ValidationError");
+        expect(mockedUserService.createUser).not.toHaveBeenCalled();
       });
-      expect(result2.err?.name).toEqual("ValidationError");
 
-      const result3 = await userController.createUser({
-        username: "test",
-        email: "test@example.com",
-        password: "",
-        passwordConfirmation: "testPassword2",
+      it("No password", async () => {
+        const payload = generateCreatePayload();
+        payload.password = "";
+        const result = await userController.createUser(ExpressReqMock, payload);
+        expect(result.err?.name).toEqual("ValidationError");
+        expect(mockedUserService.createUser).not.toHaveBeenCalled();
       });
-      expect(result3.err?.name).toEqual("ValidationError");
+
+      it("No passwordConfirmation", async () => {
+        const payload = generateCreatePayload();
+        payload.passwordConfirmation = "";
+        const result = await userController.createUser(ExpressReqMock, payload);
+        expect(result.err?.name).toEqual("ValidationError");
+        expect(mockedUserService.createUser).not.toHaveBeenCalled();
+      });
     });
 
     it("Should return a ValidationError if the email is not valid", async () => {
-      const result = await userController.createUser({
-        username: "test",
-        email: "test.not-an-email.com",
-        password: "testPassword",
-        passwordConfirmation: "testPassword2",
-      });
+      const payload = generateCreatePayload();
+      payload.email = "not-an-email.com";
+      const result = await userController.createUser(ExpressReqMock, payload);
       expect(result.err?.name).toEqual("ValidationError");
+      expect(mockedUserService.createUser).not.toHaveBeenCalled();
     });
 
     it("Should return a ValidationError if the passwords don't match", async () => {
-      const result = await userController.createUser({
-        username: "test",
-        email: "test@example.com",
-        password: "testPassword",
-        passwordConfirmation: "testPassword2",
-      });
+      const payload = generateCreatePayload();
+      payload.password = "testPassword";
+      payload.passwordConfirmation = "notTheSamePassword";
+      const result = await userController.createUser(ExpressReqMock, payload);
       expect(result.err?.name).toEqual("ValidationError");
+      expect(mockedUserService.createUser).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("Sign In", () => {
+    it("Should return \"ok\" if all goes well", async () => {
+      const payload = generateSignInPayload();
+      const result = await userController.signIn(ExpressReqMock, payload);
+      expect(result).toEqual({
+        ok: true,
+        err: null,
+        data: "ok",
+      });
+      expect(mockedUserService.signIn).toHaveBeenCalledWith(payload);
+    });
+
+    describe("Should return a ValidationError if required fields are not supplied", () => {
+      it("No email", async () => {
+        const payload = generateSignInPayload();
+        payload.email = "";
+        const result = await userController.signIn(ExpressReqMock, payload);
+        expect(result.err?.name).toEqual("ValidationError");
+        expect(mockedUserService.createUser).not.toHaveBeenCalled();
+      });
     });
   });
 });

@@ -2,8 +2,9 @@ import { Box } from '@mui/material';
 import React from 'react';
 
 import AppName from '../../components/AppName';
+import { useAuth } from '../../hooks/useAuth';
 
-import LoginForm from './LoginForm';
+import SignInForm from './SignInForm';
 
 
 const styles = {
@@ -19,15 +20,19 @@ const styles = {
   },
 };
 
-function Login() {
+function SignIn() {
+  const { loading } = useAuth({ redirectTo: '/', redirectOn: 'loggedIn' });
+  if (loading) {
+    return <></>;
+  }
   return (
     <Box sx={styles.container}>
       <Box>
         <AppName animate styles={{ marginBottom: '5vh', textAlign: 'center' }}/>
-        <LoginForm/>
+        <SignInForm/>
       </Box>
     </Box>
   );
 }
 
-export default Login;
+export default SignIn;

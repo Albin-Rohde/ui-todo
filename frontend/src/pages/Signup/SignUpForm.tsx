@@ -73,16 +73,17 @@ function SignUpForm() {
       setFormError(errors);
       return;
     }
-    const responseData = await sendRequest<'ok'>(
-      '/user',
-      'POST',
-      {
+
+    const responseData = await sendRequest<'ok'>({
+      path: '/user',
+      method: 'POST',
+      body: {
         email,
         username,
         password,
         passwordConfirmation: confirmPassword,
       }
-    );
+    })
     if (!responseData.ok && isValidationError(responseData.err)) {
       const { field, message } = responseData.err.extra
       setFormError({
@@ -154,7 +155,7 @@ function SignUpForm() {
       <InforMessageBox>
         <Typography variant="body2">
           Already have an account? {' '}
-          <MuiLink to="/login" component={RouterLink} underline="hover">
+          <MuiLink to="/signin" component={RouterLink} underline="hover">
             Sign in
           </MuiLink>.
         </Typography>

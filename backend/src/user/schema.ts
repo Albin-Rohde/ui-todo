@@ -10,5 +10,10 @@ export const createUserSchema = object({
     }),
   username: string().required(),
 });
-
 export type createUserInput = Asserts<typeof createUserSchema>
+
+export const signInSchema = object({
+  email: string().email().required(),
+  password: string().required(),
+});
+export type signInInput = Asserts<typeof signInSchema>
