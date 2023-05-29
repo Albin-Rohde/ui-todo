@@ -2,6 +2,7 @@ import { Box } from '@mui/material';
 import React from 'react';
 
 import AppName from '../../components/AppName';
+import { useAuth } from '../../hooks/useAuth';
 
 import SignUpForm from './SignUpForm';
 
@@ -20,6 +21,10 @@ const styles = {
 };
 
 function Signup() {
+  const { loading } = useAuth({ redirectTo: '/', redirectOn: 'loggedIn' });
+  if (loading) {
+    return <></>;
+  }
   return (
     <Box sx={styles.container}>
       <Box>
