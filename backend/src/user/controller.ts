@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Req, UseBefore } from "routing-controllers";
-import { createUserInput, createUserSchema } from "./schema";
+import { createUserInput, createUserSchema, signInSchema } from "./schema";
 import { UserService } from "./service";
 import { handleErrors } from "../decorators";
 import { RestResponse } from "../types";
@@ -31,6 +31,19 @@ export class UserController {
   async createUser(@Req() req: Request, @Body() data: createUserInput): Promise<RestResponse<"ok">> {
     const userData = await createUserSchema.validate(data);
     req.session.user = await this.userService.createUser(userData);
+    req.session.save();
+    return {
+      ok: true,
+      err: null,
+      data: "ok",
+    };
+  }
+
+  @handleErrors
+  @Post("/signin")
+  async signIn(@Req() req: Request, @Body() data: createUserInput): Promise<RestResponse<"ok">> {
+    const userData = await signInSchema.validate(data);
+    req.session.user = await this.userService.signIn(userData);
     req.session.save();
     return {
       ok: true,

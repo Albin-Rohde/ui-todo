@@ -1,7 +1,7 @@
 import { UserDAO } from "./dao";
 import { User } from "./entity/User";
 import bcrypt from "bcrypt";
-import { createUserInput } from "./schema";
+import { createUserInput, signInInput } from "./schema";
 import { ValidationError } from "yup";
 
 export class UserService {
@@ -37,6 +37,26 @@ export class UserService {
 
   public async getUserById(id: string): Promise<User | undefined> {
     return this.userDAO.getUserByIdOrFail(id);
+  }
+
+  public async signIn(input: signInInput): Promise<User> {
+    const user = await this.userDAO.getByEmail(input.email);
+    if (!user) {
+      throw new ValidationError(
+        "User with that email does not exist.",
+        input.email,
+        "email"
+      );
+    }
+    const match = await bcrypt.compare(input.password, user.password);
+    if (!match) {
+      throw new ValidationError(
+        "Password is incorrect.",
+        input.password,
+        "password"
+      );
+    }
+    return user;
   }
 
   private async hashPassword(password: string): Promise<string> {
