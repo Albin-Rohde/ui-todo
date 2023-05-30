@@ -3,6 +3,8 @@ import { User } from "./entity/User";
 import bcrypt from "bcrypt";
 import { createUserInput, signInInput } from "./schema";
 import { ValidationError } from "yup";
+import { AuthenticationError } from "../error";
+
 
 export class UserService {
   private userDAO: UserDAO;
@@ -57,6 +59,18 @@ export class UserService {
       );
     }
     return user;
+  }
+
+  public async authUser(userData: User | undefined | null): Promise<User> {
+    if (!userData) {
+      throw new AuthenticationError("You are not logged in.")
+    }
+    const userService = new UserService()
+    const user = await userService.getUserById(userData.id)
+    if (!user) {
+      throw new AuthenticationError("User not found")
+    }
+    return user
   }
 
   private async hashPassword(password: string): Promise<string> {
