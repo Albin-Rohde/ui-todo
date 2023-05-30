@@ -9,7 +9,7 @@ export class UserDAO {
     this.userRepository = dataSource.getRepository(User);
   }
 
-  async getUserByIdOrFail(id: string): Promise<User> {
+  async getUserByIdOrFail(id: number): Promise<User> {
     return this.userRepository.findOneOrFail({ where: { id: id } });
   }
 

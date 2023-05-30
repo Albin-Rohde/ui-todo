@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import { createUserInput, signInInput } from "./schema";
 import { ValidationError } from "yup";
 import { AuthenticationError } from "../error";
+import { UserResponse } from "./ResponseTypes";
 
 
 export class UserService {
@@ -37,7 +38,7 @@ export class UserService {
     return this.userDAO.createUser(user);
   }
 
-  public async getUserById(id: string): Promise<User | undefined> {
+  public async getUserById(id: number): Promise<User | undefined> {
     return this.userDAO.getUserByIdOrFail(id);
   }
 
@@ -71,6 +72,14 @@ export class UserService {
       throw new AuthenticationError("User not found")
     }
     return user
+  }
+
+  public getUserResponseFromUser(user: User): UserResponse {
+    return {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+    };
   }
 
   private async hashPassword(password: string): Promise<string> {

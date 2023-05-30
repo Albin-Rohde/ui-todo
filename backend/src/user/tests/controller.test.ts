@@ -1,13 +1,11 @@
 import { UserController } from "../controller";
 import { UserService } from "../service";
-import { UserDAO } from "../dao";
 import { ExpressReqMock } from "../../test-utils/mocks";
 import { generateCreatePayload, generateSignInPayload } from "../../test-utils/payload";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const mockedUserService: jest.Mocked<UserService> = {
-  userDAO: jest.mocked(UserDAO) as unknown as UserDAO,
   getUserById: jest.fn(),
   createUser: jest.fn(),
   signIn: jest.fn(),

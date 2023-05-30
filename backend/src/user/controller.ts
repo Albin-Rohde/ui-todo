@@ -1,10 +1,12 @@
 import { Body, Controller, Get, Post, Req, UseBefore } from "routing-controllers";
 import { createUserInput, createUserSchema, signInInput, signInSchema } from "./schema";
 import { UserService } from "./service";
-import { handleErrors } from "../decorators";
+import { CurrentUser, HandleErrors } from "../decorators";
 import { RestResponse } from "../types";
 import { loginRequired } from "../middlewares";
 import { Request } from "express";
+import { User } from "./entity/User";
+import { UserResponse } from "./ResponseTypes";
 
 
 @Controller("/user")
@@ -15,18 +17,18 @@ export class UserController {
     this.userService = userService || new UserService() as UserService
   }
 
-  @handleErrors
+  @HandleErrors
   @Get("/session")
   @UseBefore(loginRequired)
-  getStatus(): RestResponse<boolean> {
+  getStatus(@CurrentUser() user: User): RestResponse<UserResponse> {
     return {
       ok: true,
       err: null,
-      data: true,
+      data: this.userService.getUserResponseFromUser(user),
     }
   }
 
-  @handleErrors
+  @HandleErrors
   @Post("/")
   async createUser(@Req() req: Request, @Body() data: createUserInput): Promise<RestResponse<"ok">> {
     const userData = await createUserSchema.validate(data);
@@ -39,7 +41,7 @@ export class UserController {
     };
   }
 
-  @handleErrors
+  @HandleErrors
   @Post("/signin")
   async signIn(@Req() req: Request, @Body() data: signInInput): Promise<RestResponse<"ok">> {
     const userData = await signInSchema.validate(data);

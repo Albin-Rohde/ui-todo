@@ -3,7 +3,7 @@ import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, } from "typeo
 @Entity("user")
 export class User {
   @PrimaryGeneratedColumn()
-  id!: string;
+  id!: number;
 
   @Column({ length: 255, unique: true })
   email!: string;

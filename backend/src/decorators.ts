@@ -1,7 +1,8 @@
 import { ValidationError } from "yup";
 import { RestValidationError } from "./types";
+import { createParamDecorator } from "routing-controllers";
 
-export const handleErrors = (
+export const HandleErrors = (
   target: object,
   key: string | symbol,
   descriptor: PropertyDescriptor
@@ -43,4 +44,13 @@ const buildValidationError = (err: ValidationError): RestValidationError => {
     message,
     extra: { field: path, message }
   };
+}
+
+export function CurrentUser(options?: { required?: boolean }) {
+  return createParamDecorator({
+    required: options && options.required ? true : false,
+    value: action => {
+      return action.request.session.user
+    },
+  });
 }

@@ -119,14 +119,22 @@ describe("User rest routes", () => {
     });
   });
   describe("GET /api/user/session", () => {
-    it("Should return true for signed-in user", async () => {
+    it("Should return User for signed-in user", async () => {
       const agent = request.agent(server);
-      await new UserFactory().createSignedIn(agent);
+      const user = await new UserFactory().createSignedIn(agent);
       const response = await agent
         .get("/api/user/session")
         .expect(200);
 
-      expect(response.body).toEqual({ ok: true, err: null, data: true });
+      expect(response.body).toEqual({
+        ok: true,
+        err: null,
+        data: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+        }
+      });
     });
 
     it("Should return AuthenticationError for non-signed-in user", async () => {
