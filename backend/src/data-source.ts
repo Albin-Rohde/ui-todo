@@ -2,11 +2,13 @@ import { User } from "./user/entity/User";
 import { DataSource } from "typeorm";
 import * as dotenv from "dotenv";
 import { AddUserTable1685139437466 } from "./migrations/1685139437466-AddUserTable";
+import { TodoList } from "./todolist/entity/TodoList";
+import { AddTodoTable1685522666796 } from "./migrations/1685522666796-AddTodoTable";
 
 
 dotenv.config();
 
-export const entities = [User];
+export const entities = [User, TodoList];
 
 export const db = new DataSource({
   type: "postgres",
@@ -20,7 +22,8 @@ export const db = new DataSource({
   entities: entities,
   subscribers: [],
   migrations: [
-    AddUserTable1685139437466
+    AddUserTable1685139437466,
+    AddTodoTable1685522666796,
   ],
 });
 
