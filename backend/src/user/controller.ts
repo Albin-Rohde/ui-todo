@@ -1,26 +1,21 @@
-import { Body, Controller, Get, Post, Req, UseBefore } from "routing-controllers";
+import { Body, Controller, Get, Post, Req, Res, UseBefore } from "routing-controllers";
 import { createUserInput, createUserSchema, signInInput, signInSchema } from "./schema";
 import { UserService } from "./service";
 import { CurrentUser, HandleErrors } from "../decorators";
-import { RestResponse } from "../types";
 import { loginRequired } from "../middlewares";
-import { Request } from "express";
+import { Request, Response } from "express";
 import { User } from "./entity/User";
-import { UserResponse } from "./ResponseTypes";
 
 
 @Controller("/user")
 export class UserController {
-  private readonly userService: UserService;
-
-  constructor(userService: UserService | null = null) {
-    this.userService = userService || new UserService() as UserService
+  constructor(private readonly userService: UserService = new UserService()) {
   }
 
   @HandleErrors
   @Get("/session")
   @UseBefore(loginRequired)
-  getStatus(@CurrentUser() user: User): RestResponse<UserResponse> {
+  getStatus(@CurrentUser() user: User) {
     return {
       ok: true,
       err: null,
@@ -30,7 +25,7 @@ export class UserController {
 
   @HandleErrors
   @Post("/")
-  async createUser(@Req() req: Request, @Body() data: createUserInput): Promise<RestResponse<"ok">> {
+  async createUser(@Req() req: Request, @Body() data: createUserInput) {
     const userData = await createUserSchema.validate(data);
     req.session.user = await this.userService.createUser(userData);
     req.session.save();
@@ -43,7 +38,7 @@ export class UserController {
 
   @HandleErrors
   @Post("/signin")
-  async signIn(@Req() req: Request, @Body() data: signInInput): Promise<RestResponse<"ok">> {
+  async signIn(@Req() req: Request, @Body() data: signInInput) {
     const userData = await signInSchema.validate(data);
     req.session.user = await this.userService.signIn(userData);
     req.session.save();

@@ -147,6 +147,17 @@ describe("User rest routes", () => {
         });
     });
   });
+
+  describe("POST /api/user/signout", () => {
+    it("Should clear cookie on successful signout", async () => {
+      const agent = request.agent(server);
+      await new UserFactory().createSignedIn(agent);
+      await agent
+        .post("/api/user/signout")
+        .expect(200)
+        .expect("Set-Cookie", /sessionID=;/);
+    });
+  });
 });
 
 
