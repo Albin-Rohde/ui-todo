@@ -35,10 +35,6 @@ export class UserService {
     return this.userRepository.save(user);
   }
 
-  public async getUserById(id: number): Promise<User | undefined> {
-    return this.userRepository.findOneOrFail({ where: { id: id } });
-  }
-
   public async signIn(input: signInInput): Promise<User> {
     const user = await this.userRepository.findOne({ where: { email: input.email } })
     if (!user) {
