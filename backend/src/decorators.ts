@@ -1,5 +1,6 @@
 import { ValidationError } from "yup";
 import { createParamDecorator } from "routing-controllers";
+import { EntityNotFoundError } from "typeorm";
 
 export const HandleErrors = (
   target: object,
@@ -21,6 +22,13 @@ const returnErrorResponse = (err: unknown) => {
     return {
       ok: false,
       err: buildValidationError(err),
+      data: null
+    }
+  }
+  if (err instanceof EntityNotFoundError) {
+    return {
+      ok: false,
+      err: { name: "NotFoundError", message: "resource could not be found" },
       data: null
     }
   }

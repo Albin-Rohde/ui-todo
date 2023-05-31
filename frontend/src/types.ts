@@ -23,3 +23,9 @@ export type User = {
   email: string,
   username: string,
 }
+
+export type TodoList = {
+  id: number,
+  publicId: string,
+  name: string,
+}

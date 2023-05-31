@@ -3,10 +3,19 @@ import "reflect-metadata";
 import { db } from "../../data-source";
 import { Server } from "http";
 import { getTestServer } from "../../test-utils/testServer";
-import { generateCreatePayload } from "../../test-utils/payload";
 import { UserFactory } from "../../test-utils/factories";
 import bcrypt from "bcrypt";
 import { faker } from "@faker-js/faker";
+
+const generateCreatePayload = () => {
+  const password = faker.internet.password();
+  return {
+    username: faker.internet.userName(),
+    email: faker.internet.email(),
+    password: password,
+    passwordConfirmation: password,
+  }
+};
 
 describe("User rest routes", () => {
   let server: Server;

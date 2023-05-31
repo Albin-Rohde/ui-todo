@@ -8,6 +8,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import express, { Application, Request, Response } from "express";
 import { getRedisStore } from "./redisStore";
+import { TodoListController } from "./todolist/controller";
 
 dotenv.config();
 
@@ -38,7 +39,7 @@ export const getExpressApp = async (): Promise<Application> => {
 
     app.get("/health", (req: Request, res: Response) => res.json({ "status": "ok" }));
     const server = createExpressServer({
-      controllers: [UserController],
+      controllers: [UserController, TodoListController],
     });
 
     app.use("/api", server);
