@@ -18,3 +18,8 @@ export type RestResponse<T> = {
   err?: RestError | RestValidationError
   data: T
 }
+
+export type User = {
+  email: string,
+  username: string,
+}

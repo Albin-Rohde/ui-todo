@@ -1,18 +1,18 @@
-import { UserDAO } from "./dao";
 import { User } from "./entity/User";
 import bcrypt from "bcrypt";
 import { createUserInput, signInInput } from "./schema";
 import { ValidationError } from "yup";
+import { AuthenticationError } from "../error";
+import { Repository } from "typeorm";
+import { db } from "../data-source";
+
 
 export class UserService {
-  private userDAO: UserDAO;
-
-  constructor(userDAO: UserDAO = new UserDAO()) {
-    this.userDAO = userDAO;
+  constructor(private readonly userRepository: Repository<User> = db.getRepository(User)) {
   }
 
   public async createUser(userData: createUserInput): Promise<User> {
-    const userByEmail = await this.userDAO.getByEmail(userData.email);
+    const userByEmail = await this.userRepository.findOne({ where: { email: userData.email } })
     if (userByEmail) {
       throw new ValidationError(
         "User with that email already exist.",
@@ -20,7 +20,7 @@ export class UserService {
         "email"
       );
     }
-    const userByUsername = await this.userDAO.getByUsername(userData.username);
+    const userByUsername = await this.userRepository.findOne({ where: { username: userData.username } })
     if (userByUsername) {
       throw new ValidationError(
         "User with that username already exist.",
@@ -32,15 +32,15 @@ export class UserService {
     user.username = userData.username;
     user.email = userData.email;
     user.password = await this.hashPassword(userData.password);
-    return this.userDAO.createUser(user);
+    return this.userRepository.save(user);
   }
 
-  public async getUserById(id: string): Promise<User | undefined> {
-    return this.userDAO.getUserByIdOrFail(id);
+  public async getUserById(id: number): Promise<User | undefined> {
+    return this.userRepository.findOneOrFail({ where: { id: id } });
   }
 
   public async signIn(input: signInInput): Promise<User> {
-    const user = await this.userDAO.getByEmail(input.email);
+    const user = await this.userRepository.findOne({ where: { email: input.email } })
     if (!user) {
       throw new ValidationError(
         "User with that email does not exist.",
@@ -57,6 +57,25 @@ export class UserService {
       );
     }
     return user;
+  }
+
+  public async authUser(userData: User | undefined | null): Promise<User> {
+    if (!userData) {
+      throw new AuthenticationError("You are not logged in.")
+    }
+    const user = await this.userRepository.findOne({ where: { id: userData.id } })
+    if (!user) {
+      throw new AuthenticationError("User not found")
+    }
+    return user
+  }
+
+  public getUserResponseFromUser(user: User) {
+    return {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+    };
   }
 
   private async hashPassword(password: string): Promise<string> {

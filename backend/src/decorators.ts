@@ -1,7 +1,7 @@
 import { ValidationError } from "yup";
-import { RestValidationError } from "./types";
+import { createParamDecorator } from "routing-controllers";
 
-export const handleErrors = (
+export const HandleErrors = (
   target: object,
   key: string | symbol,
   descriptor: PropertyDescriptor
@@ -10,13 +10,13 @@ export const handleErrors = (
   descriptor.value = async function (...args: unknown[]) {
     try {
       return await originalMethod.apply(this, args);
-    } catch (err) {
+    } catch (err: unknown) {
       return returnErrorResponse(err as Error)
     }
   };
 };
 
-const returnErrorResponse = (err: Error) => {
+const returnErrorResponse = (err: unknown) => {
   if (err instanceof ValidationError) {
     return {
       ok: false,
@@ -33,7 +33,7 @@ const returnErrorResponse = (err: Error) => {
   }
 }
 
-const buildValidationError = (err: ValidationError): RestValidationError => {
+const buildValidationError = (err: ValidationError) => {
   const { message, path } = err;
   if (!path) {
     throw new Error("ValidationError must have a path");
@@ -43,4 +43,13 @@ const buildValidationError = (err: ValidationError): RestValidationError => {
     message,
     extra: { field: path, message }
   };
+}
+
+export function CurrentUser(options?: { required?: boolean }) {
+  return createParamDecorator({
+    required: options && options.required ? true : false,
+    value: action => {
+      return action.request.session.user
+    },
+  });
 }
