@@ -48,4 +48,19 @@ export class UserController {
       data: "ok",
     };
   }
+
+  @HandleErrors
+  @Post("/signout")
+  @UseBefore(loginRequired)
+  async signOut(@Req() req: Request, @Res() res: Response) {
+    await new Promise<void>((resolve, reject) => {
+      req.session.destroy(() => resolve());
+    })
+    res.clearCookie("sessionID")
+    return {
+      ok: true,
+      err: null,
+      data: "ok",
+    };
+  }
 }
