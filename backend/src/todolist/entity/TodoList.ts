@@ -4,9 +4,11 @@ import {
   Generated,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn
 } from "typeorm";
 import { User } from "../../user/entity/User";
+import { TodoItem } from "../../todoitem/entity/TodoItem";
 
 @Entity("todo_list")
 export class TodoList {
@@ -29,4 +31,7 @@ export class TodoList {
 
   @Column({ name: "user_id" })
   userId!: number;
+
+  @OneToMany(() => TodoItem, todoItem => todoItem.list)
+  items!: TodoItem[];
 }
