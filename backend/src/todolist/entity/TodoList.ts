@@ -19,8 +19,8 @@ export class TodoList {
   name!: string;
 
   @Generated("uuid")
-  @Column()
-  public_id!: string;
+  @Column({ name: "public_id" })
+  publicId!: string;
 
   @ManyToOne(type => User, user => user.todoLists, {
     cascade: true,

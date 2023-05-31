@@ -91,7 +91,7 @@ describe("User rest routes", () => {
       const todoList = await new TodoListFactory().create({ user });
 
       const newName = faker.lorem.words(2);
-      await agent.put(`/api/todo-list/${todoList.public_id}`)
+      await agent.put(`/api/todo-list/${todoList.publicId}`)
         .send({ name: newName })
         .expect(200);
 
@@ -128,12 +128,12 @@ describe("User rest routes", () => {
       const user = await new UserFactory().createSignedIn(agent);
       const todoList = await new TodoListFactory().create({ user });
 
-      const response = await agent.get(`/api/todo-list/${todoList.public_id}`)
+      const response = await agent.get(`/api/todo-list/${todoList.publicId}`)
         .expect(200);
 
       expect(response.body.data).toBeDefined();
       expect(response.body.data.id).toEqual(todoList.id);
-      expect(response.body.data.publicId).toEqual(todoList.public_id);
+      expect(response.body.data.publicId).toEqual(todoList.publicId);
     });
 
     it("Should return NotFoundError if todo-list does not exist", async () => {

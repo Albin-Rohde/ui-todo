@@ -24,7 +24,7 @@ export class TodoListService {
     return this.todoListRepository.findOneOrFail({
       where: {
         userId: user.id,
-        public_id: publicId
+        publicId: publicId
       }
     });
   }
@@ -44,7 +44,7 @@ export class TodoListService {
   public responseFormat(todoList: TodoList) {
     return {
       id: todoList.id,
-      publicId: todoList.public_id,
+      publicId: todoList.publicId,
       name: todoList.name,
     }
   }
