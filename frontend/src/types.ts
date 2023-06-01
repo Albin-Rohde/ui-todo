@@ -29,3 +29,9 @@ export type TodoList = {
   publicId: string,
   name: string,
 }
+
+export type TodoItem = {
+  id: number,
+  text: string,
+  complete: boolean,
+}

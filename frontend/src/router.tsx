@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useRoutes } from 'react-router-dom';
 
+import { TodoItemContextProvider } from './contexts/TodoItemsContext';
 import { TodoListContextProvider } from './contexts/TodoListContext'
 import { TodoListsContextProvider } from './contexts/TodoListsContext'
 import EmptyState from './pages/Dashboard/EmptyState';
@@ -22,7 +23,9 @@ export const routes = [
     element: (
       <TodoListsContextProvider>
         <TodoListContextProvider>
-          <ListView/>
+          <TodoItemContextProvider>
+            <ListView/>
+          </TodoItemContextProvider>
         </TodoListContextProvider>
       </TodoListsContextProvider>
     ),
