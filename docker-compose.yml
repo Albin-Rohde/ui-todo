@@ -4,7 +4,6 @@ services:
   db:
     container_name: ui-todo.db
     image: postgres
-    restart: unless-stopped
     networks:
       - local
     ports:
