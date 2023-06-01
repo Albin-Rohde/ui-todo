@@ -41,7 +41,7 @@ const ListOfTodoLists = () => {
       id: number;
       name: string;
     }]>({
-      path: '/todo-list/all',
+      path: '/todo-list/my',
       method: 'GET',
     });
 

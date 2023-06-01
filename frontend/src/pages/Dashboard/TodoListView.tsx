@@ -36,7 +36,7 @@ function ListView() {
       const response = await sendRequest<{
         id: number;
         text: string;
-        complete: boolean;
+        completed: boolean;
       }[]>({
         path: `/todo-list/${id}/todo-item`,
         method: 'GET',

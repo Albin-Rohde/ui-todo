@@ -1,10 +1,11 @@
 import { Box, Link as MuiLink, TextField, Typography } from '@mui/material';
 import { styled } from '@mui/system';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 import InforMessageBox from '../../components/InforMessageBox';
 import PrimaryButton from '../../components/PrimaryButton';
+import { UserContext } from '../../contexts/UserContext';
 import useHttp from '../../hooks/useHttp';
 import { isValidationError } from '../../typeguard';
 
@@ -28,7 +29,8 @@ function SignInForm() {
     email: '',
     password: '',
   });
-  const { loading, sendRequest } = useHttp();
+  const { sendRequest } = useHttp();
+  const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   const checkFormForError = (): { ok: boolean, errors: FormFieldError } => {
@@ -55,7 +57,11 @@ function SignInForm() {
       return;
     }
 
-    const response = await sendRequest({
+    const response = await sendRequest<{
+      id: number,
+      email: string,
+      username: string,
+    }>({
       path: '/user/signin',
       method: 'POST',
       body: {
@@ -72,7 +78,8 @@ function SignInForm() {
       });
       return;
     }
-    if (response.data === 'ok') {
+    if (response.data) {
+      setUser(response.data);
       navigate('/');
     }
   }

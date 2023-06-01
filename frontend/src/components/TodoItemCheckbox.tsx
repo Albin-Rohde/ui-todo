@@ -25,7 +25,7 @@ const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
         if (item.id === props.item.id) {
           return {
             ...item,
-            complete: !item.complete,
+            completed: !item.completed,
           };
         }
         return item;
@@ -35,7 +35,7 @@ const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
       path: `/todo-list/${id}/todo-item/${props.item.id}`,
       method: 'PUT',
       body: {
-        complete: !props.item.complete,
+        completed: !props.item.completed,
         text: props.item.text,
       }
     })
@@ -61,7 +61,7 @@ const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
       method: 'PUT',
       body: {
         text: props.item.text,
-        complete: props.item.complete,
+        complete: props.item.completed,
       }
     })
   }
@@ -72,7 +72,7 @@ const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
     >
       <Checkbox
         sx={{ height: '30px', marginTop: '0px', paddingTop: 0, paddingBottom: 0 }}
-        checked={props.item.complete}
+        checked={props.item.completed}
         onClick={handleCheckboxClick}
       />
       <Box sx={{

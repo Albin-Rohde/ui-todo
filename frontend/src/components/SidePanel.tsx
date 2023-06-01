@@ -3,6 +3,7 @@ import { styled } from '@mui/system';
 import React from 'react';
 
 import AppName from './AppName';
+import ListOfRecentLists from './ListOfRecentLists';
 import ListOfTodoLists from './ListOfTodoLists';
 import UserProfile from './UserProfile';
 
@@ -33,6 +34,10 @@ const SidePanel = () => {
         <SubHeading>My Todos</SubHeading>
       </Box>
       <ListOfTodoLists/>
+      <Box marginTop={0} marginLeft={2}>
+        <SubHeading>Other Todos</SubHeading>
+      </Box>
+      <ListOfRecentLists/>
       <UserProfile/>
     </Box>
   );
