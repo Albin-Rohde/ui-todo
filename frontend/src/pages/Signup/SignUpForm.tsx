@@ -6,13 +6,15 @@ import {
   Typography
 } from '@mui/material';
 import { styled } from '@mui/system';
-import React, { MouseEvent, useState } from 'react';
+import React, { MouseEvent, useContext, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
 import InforMessageBox from '../../components/InforMessageBox';
 import PrimaryButton from '../../components/PrimaryButton';
+import { UserContext } from '../../contexts/UserContext';
 import useHttp from '../../hooks/useHttp';
 import { isValidationError } from '../../typeguard';
+import { User } from '../../types';
 
 const Container = styled(Box)(() => ({
   display: 'flex',
@@ -41,6 +43,7 @@ function SignUpForm() {
     password: '',
     confirmPassword: '',
   });
+  const { setUser } = useContext(UserContext);
 
   const checkFormForError = (): { ok: boolean, errors: FormFieldError } => {
     let ok = true;
@@ -74,7 +77,7 @@ function SignUpForm() {
       return;
     }
 
-    const responseData = await sendRequest<'ok'>({
+    const responseData = await sendRequest<User>({
       path: '/user',
       method: 'POST',
       body: {
@@ -90,6 +93,9 @@ function SignUpForm() {
         ...errors,
         [field]: message,
       });
+    }
+    if (responseData.ok && responseData.data) {
+      setUser(responseData.data);
     }
   }
 
