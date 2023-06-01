@@ -10,6 +10,7 @@ import { faker } from "@faker-js/faker";
 import { SuperAgentTest } from "supertest";
 import { hashSync } from "bcrypt";
 import { TodoList } from "../todolist/entity/TodoList";
+import { TodoItem } from "../todoitem/entity/TodoItem";
 
 export class UserFactory extends Factory<User> {
   protected entity = User
@@ -45,6 +46,20 @@ export class TodoListFactory extends Factory<TodoList> {
       name: faker.lorem.words(2),
       user: new LazyInstanceAttribute((instance) => new SingleSubfactory(UserFactory, { todoLists: [instance] })),
       userId: new LazyInstanceAttribute((instance) => instance.user.id),
+    }
+  }
+}
+
+export class TodoItemFactory extends Factory<TodoItem> {
+  protected entity = TodoItem
+  protected dataSource = db
+
+  protected attrs(): FactorizedAttrs<TodoItem> {
+    return {
+      text: faker.lorem.sentence(),
+      completed: false,
+      list: new LazyInstanceAttribute((instance) => new SingleSubfactory(TodoListFactory, { items: [instance] })),
+      listId: new LazyInstanceAttribute((instance) => instance.list.id),
     }
   }
 }

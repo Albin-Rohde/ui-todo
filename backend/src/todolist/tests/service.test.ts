@@ -72,7 +72,7 @@ describe("TodolistService", () => {
     it("should return todolist by public id", async () => {
       const user = await new UserFactory().create();
       const todoList = await new TodoListFactory().create({ user });
-      const todoListById = await todoListService.getByPublicId(user, todoList.public_id);
+      const todoListById = await todoListService.getByPublicId(user, todoList.publicId);
       expect(todoListById).toBeDefined();
       expect(todoListById?.id).toEqual(todoList.id);
     });
@@ -83,7 +83,7 @@ describe("TodolistService", () => {
       const user = await new UserFactory().create();
       const todoList = await new TodoListFactory().create({ user });
       const newName = faker.lorem.words(2);
-      const updatedTodoList = await todoListService.update(user, todoList.public_id, newName);
+      const updatedTodoList = await todoListService.update(user, todoList.publicId, newName);
       expect(updatedTodoList).toBeDefined();
       expect(updatedTodoList?.name).toEqual(newName);
     });
@@ -93,7 +93,7 @@ describe("TodolistService", () => {
       const todoList = await new TodoListFactory().create({ user });
       const todoList2 = await new TodoListFactory().create({ user });
       await expect(
-        todoListService.update(user, todoList.public_id, todoList2.name)
+        todoListService.update(user, todoList.publicId, todoList2.name)
       ).rejects.toThrowError(ValidationError);
     });
   });

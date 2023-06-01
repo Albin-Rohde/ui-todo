@@ -9,6 +9,7 @@ import bodyParser from "body-parser";
 import express, { Application, Request, Response } from "express";
 import { getRedisStore } from "./redisStore";
 import { TodoListController } from "./todolist/controller";
+import { TodoItemController } from "./todoitem/controller";
 
 dotenv.config();
 
@@ -39,7 +40,7 @@ export const getExpressApp = async (): Promise<Application> => {
 
     app.get("/health", (req: Request, res: Response) => res.json({ "status": "ok" }));
     const server = createExpressServer({
-      controllers: [UserController, TodoListController],
+      controllers: [UserController, TodoListController, TodoItemController],
     });
 
     app.use("/api", server);
