@@ -27,8 +27,8 @@ export class TodoListController {
   @HandleErrors
   @Get("/:id")
   @UseBefore(loginRequired)
-  async getTodoList(@CurrentUser() user: User, @Param("id") id: string) {
-    const todoListResponse = await this.todoListServie.getByPublicId(user, id)
+  async getTodoList(@Param("id") id: string) {
+    const todoListResponse = await this.todoListServie.getByPublicId(id)
       .then(this.todoListServie.responseFormat)
     return {
       ok: true,

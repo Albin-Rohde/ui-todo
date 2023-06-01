@@ -72,7 +72,7 @@ describe("TodolistService", () => {
     it("should return todolist by public id", async () => {
       const user = await new UserFactory().create();
       const todoList = await new TodoListFactory().create({ user });
-      const todoListById = await todoListService.getByPublicId(user, todoList.publicId);
+      const todoListById = await todoListService.getByPublicId(todoList.publicId);
       expect(todoListById).toBeDefined();
       expect(todoListById?.id).toEqual(todoList.id);
     });

@@ -20,23 +20,22 @@ export class TodoListService {
     return this.todoListRepository.find({ where: { userId: user.id } });
   }
 
-  public async getByPublicId(user: User, publicId: string) {
+  public async getByPublicId(publicId: string) {
     return this.todoListRepository.findOneOrFail({
       where: {
-        userId: user.id,
         publicId: publicId
       }
     });
   }
 
   public async update(user: User, publicId: string, name: string) {
-    const todoList = await this.getByPublicId(user, publicId);
-    const existingList = await this.todoListRepository.findOne({
+    const existingList = await this.todoListRepository.exist({
       where: { userId: user.id, name }
     });
     if (existingList) {
       throw new ValidationError("A list with this name already exists");
     }
+    const todoList = await this.getByPublicId(publicId);
     todoList.name = name;
     return this.todoListRepository.save(todoList);
   }
