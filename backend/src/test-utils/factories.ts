@@ -1,4 +1,5 @@
 import {
+  EagerInstanceAttribute,
   FactorizedAttrs,
   Factory,
   LazyInstanceAttribute,
@@ -45,8 +46,8 @@ export class TodoListFactory extends Factory<TodoList> {
   protected attrs(): FactorizedAttrs<TodoList> {
     return {
       name: faker.lorem.words(2),
-      user: new LazyInstanceAttribute((instance) => new SingleSubfactory(UserFactory, { todoLists: [instance] })),
-      userId: new LazyInstanceAttribute((instance) => instance.user.id),
+      user: new EagerInstanceAttribute((instance) => new SingleSubfactory(UserFactory, { todoLists: [instance] })),
+      userId: new EagerInstanceAttribute((instance) => instance.user.id),
     }
   }
 }
@@ -59,8 +60,8 @@ export class TodoItemFactory extends Factory<TodoItem> {
     return {
       text: faker.lorem.sentence(),
       completed: false,
-      list: new LazyInstanceAttribute((instance) => new SingleSubfactory(TodoListFactory, { items: [instance] })),
-      listId: new LazyInstanceAttribute((instance) => instance.list.id),
+      list: new EagerInstanceAttribute((instance) => new SingleSubfactory(TodoListFactory, { items: [instance] })),
+      listId: new EagerInstanceAttribute((instance) => instance.list.id),
     }
   }
 }
