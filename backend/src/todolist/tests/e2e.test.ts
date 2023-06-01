@@ -151,5 +151,25 @@ describe("User rest routes", () => {
           data: null,
         });
     });
+
+    it("Should save to 'RecentList' if viewing other users todo-list", async () => {
+      const owningUser = await new UserFactory().create();
+      const todoList = await new TodoListFactory().create({ user: owningUser });
+      const agent = request.agent(server);
+      const user = await new UserFactory().createSignedIn(agent);
+
+      await agent.get(`/api/todo-list/${todoList.publicId}`)
+        .expect(200);
+
+      const recentList = await db.createQueryBuilder()
+        .select("recent_todo_list")
+        .from("recent_todo_list", "recent_todo_list")
+        .where("user_id = :userId", { userId: user.id })
+        .andWhere("list_id = :todoListId", { todoListId: todoList.id })
+        .getOne();
+
+      expect(recentList).toBeDefined();
+      expect(recentList?.listId).toEqual(todoList.id);
+    });
   });
 });
