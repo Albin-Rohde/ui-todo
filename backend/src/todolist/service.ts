@@ -36,6 +36,14 @@ export class TodoListService {
     return todoList;
   }
 
+  public async getRecentByUser(user: User) {
+    const recentLists = await this.recentListRepository.find({
+      where: { userId: user.id },
+      relations: ["list"]
+    });
+    return recentLists.map(recentList => recentList.list);
+  }
+
   public async update(user: User, publicId: string, name: string) {
     const existingList = await this.todoListRepository.exist({
       where: { userId: user.id, name }

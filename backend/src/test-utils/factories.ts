@@ -11,6 +11,7 @@ import { SuperAgentTest } from "supertest";
 import { hashSync } from "bcrypt";
 import { TodoList } from "../todolist/entity/TodoList";
 import { TodoItem } from "../todoitem/entity/TodoItem";
+import { RecentList } from "../todolist/entity/RecentList";
 
 export class UserFactory extends Factory<User> {
   protected entity = User
@@ -60,6 +61,20 @@ export class TodoItemFactory extends Factory<TodoItem> {
       completed: false,
       list: new LazyInstanceAttribute((instance) => new SingleSubfactory(TodoListFactory, { items: [instance] })),
       listId: new LazyInstanceAttribute((instance) => instance.list.id),
+    }
+  }
+}
+
+export class RecentListFactory extends Factory<RecentList> {
+  protected entity = RecentList
+  protected dataSource = db
+
+  protected attrs(): FactorizedAttrs<RecentList> {
+    return {
+      list: new LazyInstanceAttribute((_) => new SingleSubfactory(TodoListFactory)),
+      listId: new LazyInstanceAttribute((instance) => instance.list.id),
+      user: new LazyInstanceAttribute((instance) => new SingleSubfactory(UserFactory, { recentLists: [instance] })),
+      userId: new LazyInstanceAttribute((instance) => instance.user.id),
     }
   }
 }

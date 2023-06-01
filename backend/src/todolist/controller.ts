@@ -25,6 +25,19 @@ export class TodoListController {
   }
 
   @HandleErrors
+  @Get("/recent")
+  @UseBefore(loginRequired)
+  async getRecentTodoLists(@CurrentUser() user: User) {
+    const todoListsResponse = (await this.todoListServie.getRecentByUser(user))
+      .map(this.todoListServie.responseFormat);
+    return {
+      ok: true,
+      err: null,
+      data: todoListsResponse,
+    }
+  }
+
+  @HandleErrors
   @Get("/:id")
   @UseBefore(loginRequired)
   async getTodoList(@Param("id") id: string, @CurrentUser() user: User) {
