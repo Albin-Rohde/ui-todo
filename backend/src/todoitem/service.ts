@@ -81,7 +81,7 @@ export class TodoItemService {
     return {
       id: todoItem.id,
       text: todoItem.text,
-      complete: todoItem.completed,
+      completed: todoItem.completed,
       listId: todoItem.listId,
     };
   }
