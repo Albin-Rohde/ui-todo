@@ -1,6 +1,7 @@
 import { Server, Socket } from "socket.io";
 import http from "http";
 import { RequestHandler } from "express";
+import todoListListeners from "./todolist/events";
 
 let socketServer: Server | null = null;
 
@@ -22,6 +23,13 @@ export const initializeSocketServer = (server: http.Server, session: RequestHand
 };
 
 const registerEventListeners = (socket: Socket): void => {
+  const listeners = [
+    ...todoListListeners,
+  ];
+  listeners.forEach((handler) => {
+    socket.on(handler.event, handler.handler(socket));
+  });
+
   socket.on("disconnect", () => {
     console.log("disconnected");
   });
