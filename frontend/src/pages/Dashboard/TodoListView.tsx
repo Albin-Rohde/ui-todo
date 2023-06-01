@@ -7,6 +7,7 @@ import { TodoItemContext } from '../../contexts/TodoItemsContext';
 import { TodoListContext } from '../../contexts/TodoListContext';
 import { useAuth } from '../../hooks/useAuth';
 import useHttp from '../../hooks/useHttp';
+import useSocketIO from '../../hooks/useSocketIO';
 
 import { TodoList } from './TodoList';
 
@@ -16,6 +17,7 @@ function ListView() {
   const { sendRequest, loading: fetchListLoading } = useHttp();
   const { setTodolist } = useContext(TodoListContext);
   const { setTodoItems } = useContext(TodoItemContext);
+  useSocketIO();
 
   useEffect(() => {
     const fetchList = async () => {
