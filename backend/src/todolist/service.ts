@@ -1,5 +1,5 @@
 import { User } from "../user/entity/User";
-import { Repository } from "typeorm";
+import { QueryFailedError, Repository } from "typeorm";
 import { db } from "../data-source";
 import { TodoList } from "./entity/TodoList";
 import { ValidationError } from "yup";
@@ -74,11 +74,21 @@ export class TodoListService {
       await this.recentListRepository.save(recentList);
       return;
     }
-    const newRecentList = new RecentList();
-    newRecentList.user = user;
-    newRecentList.list = todoList;
-    newRecentList.viewedAt = new Date();
-    await this.recentListRepository.save(newRecentList);
+
+    try {
+      const newRecentList = new RecentList();
+      newRecentList.user = user;
+      newRecentList.list = todoList;
+      newRecentList.viewedAt = new Date();
+      await this.recentListRepository.save(newRecentList);
+    } catch (error) {
+      // We can get a duplicate key raise condition,
+      // if the server is slow to save the recent list first time around.
+      if (!(error instanceof QueryFailedError)) {
+        // if error is not QueryFailedError, rethrow
+        throw error;
+      }
+    }
   }
 
   private async getUniqueName(user: User) {
