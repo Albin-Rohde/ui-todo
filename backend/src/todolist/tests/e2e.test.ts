@@ -69,13 +69,13 @@ describe("User rest routes", () => {
     });
   });
 
-  describe("GET /api/todo-list", () => {
+  describe("GET /api/todo-list/my", () => {
     it("Should return todo-lists for user", async () => {
       const agent = request.agent(server);
       const user = await new UserFactory().createSignedIn(agent);
       await new TodoListFactory().createMany(5, { user });
 
-      const response = await agent.get("/api/todo-list/all")
+      const response = await agent.get("/api/todo-list/my")
         .set("Accept", "application/json")
         .expect(200);
 

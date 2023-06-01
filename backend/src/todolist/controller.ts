@@ -12,7 +12,7 @@ export class TodoListController {
   }
 
   @HandleErrors
-  @Get("/all")
+  @Get("/my")
   @UseBefore(loginRequired)
   async getAllTodoLists(@CurrentUser() user: User) {
     const todoListsResponse = (await this.todoListServie.getAllByUser(user))
