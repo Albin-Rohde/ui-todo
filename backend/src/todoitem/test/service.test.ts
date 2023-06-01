@@ -29,7 +29,6 @@ describe("TodoItemService", () => {
       const user = await new UserFactory().create();
       const todoList = await new TodoListFactory().create({ user });
       const todoItem = await todoItemService.create({
-        user,
         publicListId: todoList.publicId,
         text: faker.lorem.text(),
         completed: false,
@@ -43,7 +42,6 @@ describe("TodoItemService", () => {
       const user = await new UserFactory().create();
       await expect(
         todoItemService.create({
-          user,
           publicListId: faker.string.uuid(),
           text: faker.lorem.text(),
           completed: false,
@@ -51,25 +49,22 @@ describe("TodoItemService", () => {
       ).rejects.toThrowError(EntityNotFoundError);
     });
 
-    it("should not create a todoitem linked to list if user does not own list", async () => {
+    it("should create a todoitem linked to list if user does not own list", async () => {
       const user = await new UserFactory().create();
       const user2 = await new UserFactory().create();
       const todoList = await new TodoListFactory().create({ user: user2 });
 
-      await expect(
-        todoItemService.create({
-          user,
-          publicListId: todoList.publicId,
-          text: faker.lorem.text(),
-          completed: false,
-        })
-      ).rejects.toThrowError(EntityNotFoundError);
+      await todoItemService.create({
+        publicListId: todoList.publicId,
+        text: faker.lorem.text(),
+        completed: false,
+      });
 
       const count = await db.createQueryBuilder()
         .select("todo_item")
         .from("todo_item", "todo_item")
         .getCount();
-      expect(count).toEqual(0);
+      expect(count).toEqual(1);
     });
   });
 
@@ -81,7 +76,6 @@ describe("TodoItemService", () => {
 
       const newText = faker.lorem.text();
       await todoItemService.update({
-        user,
         id: todoItem.id,
         publicListId: todoList.publicId,
         text: newText,

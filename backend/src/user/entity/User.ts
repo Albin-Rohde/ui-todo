@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { TodoList } from "../../todolist/entity/TodoList";
+import { RecentList } from "../../todolist/entity/RecentList";
 
 @Entity("user")
 export class User {
@@ -26,4 +27,7 @@ export class User {
 
   @OneToMany(() => TodoList, todoList => todoList.user)
   todoLists!: TodoList[];
+
+  @OneToMany(() => RecentList, todoList => todoList.user)
+  recentLists!: RecentList[];
 }

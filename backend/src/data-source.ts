@@ -8,11 +8,19 @@ import { TodoItem } from "./todoitem/entity/TodoItem";
 import {
   AddTodoItemTable1685604745524
 } from "./migrations/1685604745524-AddTodoItemTable";
-
+import { RecentList } from "./todolist/entity/RecentList";
+import {
+  AddRecentListTable1685616756505
+} from "./migrations/1685616756505-AddRecentListTable";
 
 dotenv.config();
 
-export const entities = [User, TodoList, TodoItem];
+export const entities = [
+  User,
+  TodoList,
+  TodoItem,
+  RecentList
+];
 
 export const db = new DataSource({
   type: "postgres",
@@ -28,7 +36,8 @@ export const db = new DataSource({
   migrations: [
     AddUserTable1685139437466,
     AddTodoTable1685522666796,
-    AddTodoItemTable1685604745524
+    AddTodoItemTable1685604745524,
+    AddRecentListTable1685616756505
   ],
 });
 

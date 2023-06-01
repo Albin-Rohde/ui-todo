@@ -2,7 +2,11 @@ import { Server } from "http";
 import { getTestServer } from "../../test-utils/testServer";
 import { db } from "../../data-source";
 import request from "supertest";
-import { TodoListFactory, UserFactory } from "../../test-utils/factories";
+import {
+  RecentListFactory,
+  TodoListFactory,
+  UserFactory
+} from "../../test-utils/factories";
 import { faker } from "@faker-js/faker";
 
 describe("User rest routes", () => {
@@ -69,13 +73,13 @@ describe("User rest routes", () => {
     });
   });
 
-  describe("GET /api/todo-list", () => {
+  describe("GET /api/todo-list/my", () => {
     it("Should return todo-lists for user", async () => {
       const agent = request.agent(server);
       const user = await new UserFactory().createSignedIn(agent);
       await new TodoListFactory().createMany(5, { user });
 
-      const response = await agent.get("/api/todo-list/all")
+      const response = await agent.get("/api/todo-list/my")
         .set("Accept", "application/json")
         .expect(200);
 
@@ -150,6 +154,69 @@ describe("User rest routes", () => {
           },
           data: null,
         });
+    });
+
+    it("Should save to 'RecentList' if viewing other users todo-list", async () => {
+      const owningUser = await new UserFactory().create();
+      const todoList = await new TodoListFactory().create({ user: owningUser });
+      const agent = request.agent(server);
+      const user = await new UserFactory().createSignedIn(agent);
+
+      await agent.get(`/api/todo-list/${todoList.publicId}`)
+        .expect(200);
+
+      const recentList = await db.createQueryBuilder()
+        .select("recent_todo_list")
+        .from("recent_todo_list", "recent_todo_list")
+        .where("user_id = :userId", { userId: user.id })
+        .andWhere("list_id = :todoListId", { todoListId: todoList.id })
+        .getOne();
+
+      expect(recentList).toBeDefined();
+      expect(recentList?.listId).toEqual(todoList.id);
+    });
+  });
+
+  describe("GET /api/todo-list/recent", () => {
+    it("Should return recent todo-lists", async () => {
+      const owningUser = await new UserFactory().create();
+      const todoList = await new TodoListFactory().create({ user: owningUser });
+
+      const agent = request.agent(server);
+      const user = await new UserFactory().createSignedIn(agent);
+      await new RecentListFactory().create({ list: todoList, user });
+
+      const response = await agent.get("/api/todo-list/recent")
+        .expect(200);
+
+      expect(response.body.data).toBeDefined();
+      expect(response.body.data.length).toEqual(1);
+      expect(response.body.data[0].id).toEqual(todoList.id);
+      expect(response.body.data[0].publicId).toEqual(todoList.publicId);
+    });
+
+    it("Should return empty array if no recent todo-lists", async () => {
+      const agent = request.agent(server);
+      const user = await new UserFactory().createSignedIn(agent);
+
+      const response = await agent.get("/api/todo-list/recent")
+        .expect(200);
+
+      expect(response.body.data).toBeDefined();
+      expect(response.body.data.length).toEqual(0);
+    });
+
+    it("Should not return own lists", async () => {
+      const agent = request.agent(server);
+      const user = await new UserFactory().createSignedIn(agent);
+      const todoList = await new TodoListFactory().create({ user });
+      await agent.get(`/api/todo-list/${todoList.publicId}`)
+
+      const response = await agent.get("/api/todo-list/recent")
+        .expect(200);
+
+      expect(response.body.data).toBeDefined();
+      expect(response.body.data.length).toEqual(0);
     });
   });
 });

@@ -6,14 +6,12 @@ import { TodoList } from "../todolist/entity/TodoList";
 import { TodoListService } from "../todolist/service";
 
 type CreateTodoItemInput = {
-  user: User;
   publicListId: TodoList["publicId"];
   text: TodoItem["text"];
   completed?: TodoItem["completed"];
 }
 
 type UpdateTodoItemInput = {
-  user: User
   id: TodoItem["id"];
   publicListId: TodoList["publicId"];
   text?: TodoItem["text"];
@@ -21,7 +19,6 @@ type UpdateTodoItemInput = {
 }
 
 type DeleteTodoItemInput = {
-  user: User;
   id: TodoItem["id"];
   publicListId: TodoList["publicId"];
 }
@@ -34,7 +31,7 @@ export class TodoItemService {
   }
 
   public async create(input: CreateTodoItemInput) {
-    const list = await this.todoListService.getByPublicId(input.user, input.publicListId)
+    const list = await this.todoListService.getByPublicId(input.publicListId)
     if (!list) {
       throw new EntityNotFoundError(TodoList, "TodoList not found");
     }
@@ -46,7 +43,7 @@ export class TodoItemService {
   }
 
   public async update(input: UpdateTodoItemInput) {
-    const list = await this.todoListService.getByPublicId(input.user, input.publicListId)
+    const list = await this.todoListService.getByPublicId(input.publicListId)
     if (!list) {
       throw new EntityNotFoundError(TodoList, "TodoList not found");
     }
@@ -61,8 +58,8 @@ export class TodoItemService {
   }
 
   public async delete(input: DeleteTodoItemInput) {
-    const { user, id, publicListId } = input;
-    const list = await this.todoListService.getByPublicId(user, publicListId)
+    const { id, publicListId } = input;
+    const list = await this.todoListService.getByPublicId(publicListId)
     const item = await this.todoItemRepository.findOneOrFail({
       where: {
         id,
@@ -73,7 +70,7 @@ export class TodoItemService {
   }
 
   public async getByListId(user: User, listId: string) {
-    const list = await this.todoListService.getByPublicId(user, listId)
+    const list = await this.todoListService.getByPublicId(listId)
     if (!list) {
       throw new EntityNotFoundError(TodoList, "TodoList not found");
     }
@@ -84,7 +81,7 @@ export class TodoItemService {
     return {
       id: todoItem.id,
       text: todoItem.text,
-      complete: todoItem.completed,
+      completed: todoItem.completed,
       listId: todoItem.listId,
     };
   }

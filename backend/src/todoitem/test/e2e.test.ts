@@ -9,7 +9,7 @@ import {
 } from "../../test-utils/factories";
 import { faker } from "@faker-js/faker";
 
-describe("User rest routes", () => {
+describe("TodoItem rest routes", () => {
   let server: Server;
 
   beforeAll(async () => {
@@ -114,7 +114,7 @@ describe("User rest routes", () => {
       expect(updatedTodoItem?.completed).toEqual(completed);
     });
 
-    it("should not update the todoitem if the user is not the owner", async () => {
+    it("should update the todoitem if the user is not the owner", async () => {
       const agent = request.agent(server);
       const listOwner = await new UserFactory().create();
       await new UserFactory().createSignedIn(agent);
@@ -125,23 +125,16 @@ describe("User rest routes", () => {
 
       await agent.put(`/api/todo-list/${todoList.publicId}/todo-item/${todoItem.id}`)
         .send({
-          newText,
+          text: newText,
         })
-        .expect(200, {
-          ok: false,
-          err: {
-            name: "NotFoundError",
-            message: "resource could not be found",
-          },
-          data: null,
-        })
+        .expect(200)
 
       const updatedTodoItem = await db.createQueryBuilder()
         .select("todo_item")
         .from("todo_item", "todo_item")
         .getOne();
 
-      expect(updatedTodoItem?.text).not.toEqual(newText);
+      expect(updatedTodoItem?.text).toEqual(newText);
     });
   });
 
@@ -163,7 +156,7 @@ describe("User rest routes", () => {
       expect(deletedTodoItem).toBeNull();
     });
 
-    it("should not delete the todoitem if the user is not the owner", async () => {
+    it("should delete the todoitem if the user is not the owner", async () => {
       const agent = request.agent(server);
       const listOwner = await new UserFactory().create();
       await new UserFactory().createSignedIn(agent);
@@ -171,21 +164,14 @@ describe("User rest routes", () => {
       const todoItem = await new TodoItemFactory().create({ list: todoList });
 
       await agent.delete(`/api/todo-list/${todoList.publicId}/todo-item/${todoItem.id}`)
-        .expect(200, {
-          ok: false,
-          err: {
-            name: "NotFoundError",
-            message: "resource could not be found",
-          },
-          data: null,
-        })
+        .expect(200)
 
       const deletedTodoItem = await db.createQueryBuilder()
         .select("todo_item")
         .from("todo_item", "todo_item")
         .getOne();
 
-      expect(deletedTodoItem).toBeDefined();
+      expect(deletedTodoItem).toBeNull();
     });
   });
 });
