@@ -33,5 +33,5 @@ export type TodoList = {
 export type TodoItem = {
   id: number,
   text: string,
-  complete: boolean,
+  completed: boolean,
 }
