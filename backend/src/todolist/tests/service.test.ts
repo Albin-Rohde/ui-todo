@@ -72,9 +72,30 @@ describe("TodolistService", () => {
     it("should return todolist by public id", async () => {
       const user = await new UserFactory().create();
       const todoList = await new TodoListFactory().create({ user });
-      const todoListById = await todoListService.getByPublicId(todoList.publicId);
+      const todoListById = await todoListService.getByPublicId(todoList.publicId, user);
       expect(todoListById).toBeDefined();
       expect(todoListById?.id).toEqual(todoList.id);
+    });
+
+    it("should save list to 'RecentList' if viewing other users list", async () => {
+      const owningUser = await new UserFactory().create();
+      const todoList = await new TodoListFactory().create({ user: owningUser });
+
+      const user = await new UserFactory().create();
+      const list = await todoListService.getByPublicId(todoList.publicId, user);
+
+      expect(list).toBeDefined();
+      expect(list?.id).toEqual(todoList.id);
+      expect(list?.userId).toEqual(owningUser.id);
+
+      const recentList = await db.createQueryBuilder()
+        .select("recent_todo_list")
+        .from("recent_todo_list", "recent_todo_list")
+        .where("recent_todo_list.user_id = :userId", { userId: user.id })
+        .andWhere("recent_todo_list.list_id = :todoListId", { todoListId: todoList.id })
+        .getExists();
+
+      expect(recentList).toEqual(true);
     });
   });
 

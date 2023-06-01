@@ -3,10 +3,14 @@ import { Repository } from "typeorm";
 import { db } from "../data-source";
 import { TodoList } from "./entity/TodoList";
 import { ValidationError } from "yup";
+import { RecentList } from "./entity/RecentList";
 
 
 export class TodoListService {
-  constructor(private readonly todoListRepository: Repository<TodoList> = db.getRepository(TodoList)) {
+  constructor(
+    private readonly todoListRepository: Repository<TodoList> = db.getRepository(TodoList),
+    private readonly recentListRepository: Repository<RecentList> = db.getRepository(RecentList)
+  ) {
   }
 
   public async create(user: User) {
@@ -20,12 +24,16 @@ export class TodoListService {
     return this.todoListRepository.find({ where: { userId: user.id } });
   }
 
-  public async getByPublicId(publicId: string) {
-    return this.todoListRepository.findOneOrFail({
+  public async getByPublicId(publicId: string, user?: User) {
+    const todoList = await this.todoListRepository.findOneOrFail({
       where: {
         publicId: publicId
       }
     });
+    if (user && todoList.userId !== user.id) {
+      await this.saveToRecentLists(user, todoList);
+    }
+    return todoList;
   }
 
   public async update(user: User, publicId: string, name: string) {
@@ -35,7 +43,7 @@ export class TodoListService {
     if (existingList) {
       throw new ValidationError("A list with this name already exists");
     }
-    const todoList = await this.getByPublicId(publicId);
+    const todoList = await this.getByPublicId(publicId, user);
     todoList.name = name;
     return this.todoListRepository.save(todoList);
   }
@@ -46,6 +54,23 @@ export class TodoListService {
       publicId: todoList.publicId,
       name: todoList.name,
     }
+  }
+
+  private async saveToRecentLists(user: User, todoList: TodoList) {
+    const recentList = await this.recentListRepository.findOne({
+      where: { userId: user.id, listId: todoList.id }
+    });
+
+    if (recentList) {
+      recentList.viewedAt = new Date();
+      await this.recentListRepository.save(recentList);
+      return;
+    }
+    const newRecentList = new RecentList();
+    newRecentList.user = user;
+    newRecentList.list = todoList;
+    newRecentList.viewedAt = new Date();
+    await this.recentListRepository.save(newRecentList);
   }
 
   private async getUniqueName(user: User) {
