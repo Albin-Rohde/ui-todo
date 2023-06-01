@@ -1,21 +1,24 @@
-import { Box, CircularProgress, Divider, TextField } from '@mui/material';
+import { Box, CircularProgress, Divider } from '@mui/material';
 import { styled } from '@mui/system';
 import React, { useContext } from 'react';
 
+import TypographInput from '../../components/TypographInput';
 import { TodoListContext } from '../../contexts/TodoListContext';
 import { TodoListsContext, } from '../../contexts/TodoListsContext';
 import useHttp from '../../hooks/useHttp';
+
+import TodoItems from './TodoItems';
 
 interface TodoListProps {
   loading: boolean;
 }
 
-const ListContainer = styled(Box)({
+const ListNameContainer = styled(Box)({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   flex: 1,
-  backgroundColor: '#efefef',
+  backgroundColor: '#eaeaea',
 });
 
 export const TodoList = (props: TodoListProps) => {
@@ -23,20 +26,20 @@ export const TodoList = (props: TodoListProps) => {
   const { todoList, setTodolist } = useContext(TodoListContext);
   const { todoLists, setTodolists } = useContext(TodoListsContext);
 
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNameChange = (text: string) => {
     if (!todoList) {
       return;
     }
 
     setTodolist({
       ...todoList,
-      name: event.target.value,
+      name: text,
     });
     setTodolists(todoLists?.map((list) => {
       if (list.id === todoList.id) {
         return {
           ...list,
-          name: event.target.value,
+          name: text,
         };
       }
       return list;
@@ -54,38 +57,32 @@ export const TodoList = (props: TodoListProps) => {
 
   if (props.loading || !todoList) {
     return (
-      <ListContainer>
-        <CircularProgress/>
-      </ListContainer>
+      <ListNameContainer>
+        <Divider sx={{ width: '100%', marginTop: 11, marginBottom: 2 }}/>
+        <CircularProgress sx={{ marginTop: 8 }}/>
+      </ListNameContainer>
     );
   }
 
   return (
-    <ListContainer>
-      <TextField
-        variant="standard"
-        value={todoList.name}
-        onChange={handleNameChange}
-        onBlur={handleSaveClick}
-        sx={{
-          width: 'fit-content',
-          textAlign: 'center',
-        }}
-        inputProps={{
-          min: 0, style: { textAlign: 'center' },
-        }}
-        InputProps={{
-          disableUnderline: true,
-          sx: {
-            width: 'fit-content',
-            fontSize: '2rem',
-            fontWeight: '',
-            marginTop: '1.05rem',
-            textAlign: 'center',
-          },
-        }}
-      />
-      <Divider sx={{ width: '100%', marginTop: 2, marginBottom: 2 }}/>
-    </ListContainer>
+    <>
+      <ListNameContainer>
+        <TypographInput
+          text={todoList.name}
+          fontSize={'2rem'}
+          onChange={handleNameChange}
+          onBlur={handleSaveClick}
+          textAlign={'center'}
+        />
+        <Divider sx={{ width: '100%', marginTop: 2, marginBottom: 0 }}/>
+        <Box sx={{
+          display: 'flex',
+          width: '100%',
+          textAlign: 'left'
+        }}>
+          <TodoItems/>
+        </Box>
+      </ListNameContainer>
+    </>
   );
 };
