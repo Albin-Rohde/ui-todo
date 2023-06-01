@@ -30,6 +30,7 @@ const ListOfTodoLists = () => {
     });
 
     if (response.ok && response.data) {
+      setTodolists([...todoLists, response.data]);
       navigate('/list/' + response.data.publicId + '?new');
     }
   }
