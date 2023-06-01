@@ -2,6 +2,7 @@ import { Box, Checkbox } from '@mui/material';
 import React, { useContext } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { SocketContext } from '../contexts/SocketContext';
 import { TodoItemContext } from '../contexts/TodoItemsContext';
 import useHttp from '../hooks/useHttp';
 import { TodoItem } from '../types';
@@ -18,6 +19,7 @@ const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
   const { id } = useParams()
   const { sendRequest: updateNameRequest } = useHttp();
   const { sendRequest: updateCheckedRequest } = useHttp();
+  const { socket } = useContext(SocketContext);
 
   const handleCheckboxClick = () => {
     setTodoItems((prevItems) =>
@@ -31,14 +33,13 @@ const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
         return item;
       })
     );
-    updateCheckedRequest({
-      path: `/todo-list/${id}/todo-item/${props.item.id}`,
-      method: 'PUT',
-      body: {
-        completed: !props.item.completed,
-        text: props.item.text,
-      }
-    })
+
+    socket?.emit('todoitem.update-todo-item', {
+      listId: id,
+      id: props.item.id,
+      text: props.item.text,
+      completed: !props.item.completed,
+    });
   };
 
   const handleChangeText = (text: string) => {
@@ -53,18 +54,13 @@ const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
         return item;
       })
     );
-  };
-
-  const handleBlur = async () => {
-    await updateNameRequest({
-      path: `/todo-list/${id}/todo-item/${props.item.id}`,
-      method: 'PUT',
-      body: {
-        text: props.item.text,
-        complete: props.item.completed,
-      }
+    socket?.emit('todoitem.update-todo-item', {
+      listId: id,
+      id: props.item.id,
+      completed: props.item.completed,
+      text,
     })
-  }
+  };
 
   return (
     <Box
@@ -84,7 +80,6 @@ const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
           text={props.item.text}
           fontSize={props.fontSize}
           onChange={handleChangeText}
-          onBlur={handleBlur}
           textAlign="left"
           marginTop="0px"
         />
