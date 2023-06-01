@@ -2,11 +2,14 @@ import { useContext, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 
 import { SocketContext } from '../contexts/SocketContext';
+import { TodoItemContext } from '../contexts/TodoItemsContext';
 import { TodoListContext } from '../contexts/TodoListContext';
+import { TodoItem, TodoList } from '../types';
 
 const useSocketIO = () => {
   const { socket, setSocket, isConnected, setIsConnected } = useContext(SocketContext);
   const { todoList, setTodolist } = useContext(TodoListContext)
+  const { todoItems, setTodoItems } = useContext(TodoItemContext);
   const [prevId, setPrevId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -38,6 +41,37 @@ const useSocketIO = () => {
       setPrevId(todoList.publicId);
     }
   }, [todoList]);
+
+  useEffect(() => {
+    if (socket && !isConnected) {
+      socket.connect();
+      socket.on('todolist.list-updated', (data: TodoList) => {
+        if (todoList && data.id === todoList.id) {
+          setTodolist(data);
+        }
+      });
+
+      socket.on('todoitem.item-updated', (data: TodoItem) => {
+        setTodoItems((prev: TodoItem[]) => {
+          return prev.map((item) => {
+            if (item.id === data.id) {
+              return data;
+            }
+            return item;
+          });
+        });
+      });
+
+      socket.on('todoitem.item-created', (data: TodoItem) => {
+        if (todoItems) {
+          const newItems = [...todoItems, data];
+          setTodoItems(newItems);
+        }
+      });
+      setIsConnected(true);
+    }
+  }, [socket]);
 };
+
 
 export default useSocketIO;
