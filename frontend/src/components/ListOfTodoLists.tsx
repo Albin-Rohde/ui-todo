@@ -1,10 +1,22 @@
 import AddIcon from '@mui/icons-material/Add';
-import { Box, CircularProgress, List, ListItem, ListItemText, } from '@mui/material';
+import LockIcon from '@mui/icons-material/Lock';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import {
+  Box,
+  CircularProgress,
+  IconButton,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Tooltip,
+} from '@mui/material';
 import React, { useContext, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { TodoListsContext } from '../contexts/TodoListsContext';
 import useHttp from '../hooks/useHttp';
+import { TodoList } from '../types';
 
 import SecondaryButton from './SecondaryButton';
 
@@ -12,16 +24,13 @@ import SecondaryButton from './SecondaryButton';
 const ListOfTodoLists = () => {
   const { loading: loadingCreation, sendRequest: sendCreate } = useHttp();
   const { loading: loadingFetchList, sendRequest: sendFetchList } = useHttp();
+  const { sendRequest: sendUpdateList } = useHttp();
   const navigate = useNavigate();
   const { id } = useParams();
   const { todoLists, setTodolists } = useContext(TodoListsContext);
 
   const createTodoList = async () => {
-    const response = await sendCreate<{
-      publicId: string;
-      id: number;
-      name: string;
-    }>({
+    const response = await sendCreate<TodoList>({
       path: '/todo-list',
       method: 'POST',
       body: {
@@ -36,11 +45,7 @@ const ListOfTodoLists = () => {
   }
 
   const fetchTodoLists = async () => {
-    const response = await sendFetchList<[{
-      publicId: string;
-      id: number;
-      name: string;
-    }]>({
+    const response = await sendFetchList<TodoList[]>({
       path: '/todo-list/my',
       method: 'GET',
     });
@@ -54,6 +59,24 @@ const ListOfTodoLists = () => {
     fetchTodoLists();
   }, []);
 
+  const updateList = async (list: TodoList) => {
+    await sendUpdateList<TodoList>({
+      path: '/todo-list/' + id,
+      method: 'PUT',
+      body: {
+        ...list,
+      },
+    });
+    setTodolists((prev: TodoList[]) => {
+      return prev.map((todoList) => {
+        if (todoList.id === list.id) {
+          return list;
+        }
+        return todoList;
+      });
+    });
+  }
+
   const listItems = () => {
     if (loadingFetchList) {
       return (
@@ -63,6 +86,9 @@ const ListOfTodoLists = () => {
 
     return todoLists.map((todoList) => {
       const isSelected = todoList.publicId === id;
+      const readonlyHelpText = 'Readonly, only you can edit this list';
+      const publicHelpText = 'Public, anyone with the link can edit this list';
+
       return (
         <ListItem
           key={todoList.id}
@@ -71,6 +97,27 @@ const ListOfTodoLists = () => {
           selected={isSelected}
         >
           <ListItemText primary={todoList.name}/>
+          <ListItemIcon>
+            {todoList.readonly ? (
+              <Tooltip title={readonlyHelpText} arrow>
+                <IconButton onClick={(e) => {
+                  e.stopPropagation();
+                  updateList({ ...todoList, readonly: false })
+                }}>
+                  <LockIcon style={{ fontSize: '1.2rem' }}/>
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Tooltip title={publicHelpText} arrow>
+                <IconButton onClick={(e) => {
+                  e.stopPropagation();
+                  updateList({ ...todoList, readonly: true })
+                }}>
+                  <LockOpenIcon style={{ fontSize: '1.2rem' }}/>
+                </IconButton>
+              </Tooltip>
+            )}
+          </ListItemIcon>
         </ListItem>
       )
     });
