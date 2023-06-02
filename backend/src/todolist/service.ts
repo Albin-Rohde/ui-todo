@@ -34,9 +34,10 @@ export class TodoListService {
 
   public async getByPublicId(publicId: string, user: User) {
     const todoList = await this.todoListRepository.findOneOrFail({
-      where: {
-        publicId: publicId
-      }
+      where: [
+        { publicId: publicId, userId: user.id },
+        { publicId: publicId, private: false },
+      ]
     });
     if (user && todoList.userId !== user.id) {
       await this.saveToRecentLists(user, todoList);
@@ -60,7 +61,7 @@ export class TodoListService {
     if (existingList) {
       throw new ValidationError("A list with this name already exists");
     }
-    const todoList = await this.getByPublicId(publicId, user);
+    const todoList = await this.todoListRepository.findOneOrFail({ where: { publicId } })
 
     if (todoList.userId !== user.id) {
       if (todoList.readonly) {

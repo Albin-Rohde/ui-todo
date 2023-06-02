@@ -78,6 +78,36 @@ describe("TodolistService", () => {
       expect(todoListById?.id).toEqual(todoList.id);
     });
 
+    it("should return 'EntityNotFoundError' if todolist is private and user is not owner", async () => {
+      const owner = await new UserFactory().create();
+      const todoList = await new TodoListFactory().create({ user: owner, private: true });
+      const user = await new UserFactory().create();
+
+      await expect(todoListService.getByPublicId(todoList.publicId, user)).rejects.toThrowError(EntityNotFoundError);
+    });
+
+    it("should return todolist if todolist is readonly and user is not owner", async () => {
+      const owner = await new UserFactory().create();
+      const todoList = await new TodoListFactory().create({
+        user: owner,
+        readonly: true
+      });
+      const user = await new UserFactory().create();
+
+      const list = await todoListService.getByPublicId(todoList.publicId, user);
+      expect(list).toBeDefined();
+      expect(list?.id).toEqual(todoList.id);
+    });
+
+    it("should return todolist if todolist is private and user is owner", async () => {
+      const user = await new UserFactory().create();
+      const todoList = await new TodoListFactory().create({ user, private: true });
+
+      const list = await todoListService.getByPublicId(todoList.publicId, user);
+      expect(list).toBeDefined();
+      expect(list?.id).toEqual(todoList.id);
+    });
+
     it("should save list to 'RecentList' if viewing other users list", async () => {
       const owningUser = await new UserFactory().create();
       const todoList = await new TodoListFactory().create({ user: owningUser });
