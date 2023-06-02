@@ -83,6 +83,10 @@ export class TodoListService {
       id: todoList.id,
       publicId: todoList.publicId,
       name: todoList.name,
+      private: todoList.private,
+      readonly: todoList.readonly,
+      createdAt: todoList.createdAt,
+      userId: todoList.userId,
     }
   }
 
