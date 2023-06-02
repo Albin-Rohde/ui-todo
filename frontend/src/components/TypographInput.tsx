@@ -5,7 +5,7 @@ interface TypographInputProps {
   text: string;
   fontSize: string;
   onChange: (text: string) => void;
-  onBlur: () => void;
+  onBlur?: () => void;
   textAlign: 'left' | 'center' | 'right';
   marginTop?: string;
 }
@@ -16,7 +16,7 @@ const TypographInput = (props: TypographInputProps) => {
       variant="standard"
       value={props.text}
       onChange={(event) => props.onChange(event.target.value)}
-      onBlur={props.onBlur}
+      onBlur={props.onBlur || (() => null)}
       sx={{
         textAlign: props.textAlign,
         margin: 0,

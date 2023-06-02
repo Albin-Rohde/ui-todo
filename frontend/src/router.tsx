@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useRoutes } from 'react-router-dom';
 
 import { RecentListsContextProvider } from './contexts/RecentListsContext';
+import { SocketContextProvider } from './contexts/SocketContext';
 import { TodoItemContextProvider } from './contexts/TodoItemsContext';
 import { TodoListContextProvider } from './contexts/TodoListContext'
 import { TodoListsContextProvider } from './contexts/TodoListsContext'
@@ -28,7 +29,9 @@ export const routes = [
         <RecentListsContextProvider>
           <TodoListContextProvider>
             <TodoItemContextProvider>
-              <ListView/>
+              <SocketContextProvider>
+                <ListView/>
+              </SocketContextProvider>
             </TodoItemContextProvider>
           </TodoListContextProvider>
         </RecentListsContextProvider>
