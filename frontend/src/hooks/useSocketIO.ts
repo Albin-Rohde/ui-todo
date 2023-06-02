@@ -28,6 +28,7 @@ const useSocketIO = () => {
     return () => {
       if (socket && isConnected) {
         socket.disconnect();
+        setIsConnected(false);
       }
     }
   }, []);
@@ -68,7 +69,10 @@ const useSocketIO = () => {
           setTodoItems(newItems);
         }
       });
-      setIsConnected(true);
+
+      socket.on('connect', () => {
+        setIsConnected(true);
+      })
     }
   }, [socket]);
 };
