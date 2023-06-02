@@ -3,6 +3,7 @@ import http from "http";
 import { RequestHandler } from "express";
 import todoListListeners from "./todolist/events";
 import todoItemListeners from "./todoitem/events";
+import { loginRequiredSocket } from "./middlewares";
 
 let socketServer: Server | null = null;
 
@@ -20,6 +21,7 @@ export const initializeSocketServer = (server: http.Server, session: RequestHand
     session(socket.request, {} as any, next);
   }
   socketServer.use(mapSession)
+  socketServer.use(loginRequiredSocket)
   socketServer.on("connection", registerEventListeners);
 };
 

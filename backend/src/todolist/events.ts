@@ -14,7 +14,7 @@ export const handleJoinRoom = (socket: Socket) => async (data: { id: string }) =
       console.log(`user: ${socket.request.session.user.id} tried to join room: ${id} but it doesn't exist`);
       return;
     }
-    throw err;
+    console.error(err);
   }
 }
 
@@ -31,7 +31,7 @@ export const handleLeaveRoom = (socket: Socket) => async (data: { id: string }) 
       console.log(`user: ${socket.request.session.user.id} tried to leave room: ${id} but it doesn't exist`);
       return;
     }
-    throw err;
+    console.error(err);
   }
 }
 

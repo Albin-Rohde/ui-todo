@@ -1,5 +1,6 @@
 import { UserService } from "./user/service";
 import { NextFunction, Request, Response } from "express";
+import { Socket } from "socket.io";
 
 const userService = new UserService()
 
@@ -18,4 +19,9 @@ export const loginRequired = async (req: Request, res: Response, next: NextFunct
       data: null
     })
   }
+}
+
+export const loginRequiredSocket = async (socket: Socket) => {
+  socket.request.session.user = await userService.authUser(socket.request.session.user)
+  socket.request.session.save()
 }
