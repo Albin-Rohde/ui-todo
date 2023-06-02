@@ -6,14 +6,14 @@ import { createExpressServer } from "routing-controllers";
 import session from "express-session";
 import cors from "cors";
 import bodyParser from "body-parser";
-import express, { Application, Request, Response } from "express";
+import express, { Application, Request, RequestHandler, Response } from "express";
 import { getRedisStore } from "./redisStore";
 import { TodoListController } from "./todolist/controller";
 import { TodoItemController } from "./todoitem/controller";
 
 dotenv.config();
 
-export const getExpressApp = async (): Promise<Application> => {
+export const getExpressApp = async (session: RequestHandler): Promise<Application> => {
   try {
     await db.initialize();
     const app = express();
@@ -24,19 +24,7 @@ export const getExpressApp = async (): Promise<Application> => {
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
     app.set("trust proxy", true);
-    app.use(session({
-      secret: "apa", // TODO: change this
-      store: await getRedisStore(),
-      resave: false,
-      saveUninitialized: false,
-      proxy: true,
-      name: "sessionID",
-      cookie: {
-        secure: false, // TODO: true if https
-        httpOnly: false,
-        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-      },
-    }));
+    app.use(session);
 
     app.get("/health", (req: Request, res: Response) => res.json({ "status": "ok" }));
     const server = createExpressServer({
@@ -49,4 +37,20 @@ export const getExpressApp = async (): Promise<Application> => {
     console.error(err);
     throw err;
   }
+}
+
+export const getSessionHandler = async () => {
+  return session({
+    secret: "apa", // TODO: change this
+    store: await getRedisStore(),
+    resave: false,
+    saveUninitialized: false,
+    proxy: true,
+    name: "sessionID",
+    cookie: {
+      secure: false, // TODO: true if https
+      httpOnly: false,
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+    },
+  });
 }
