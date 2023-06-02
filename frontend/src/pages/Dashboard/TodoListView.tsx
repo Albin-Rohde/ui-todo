@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import SidePanel from '../../components/SidePanel';
@@ -17,6 +17,7 @@ function ListView() {
   const { sendRequest, loading: fetchListLoading } = useHttp();
   const { setTodolist } = useContext(TodoListContext);
   const { setTodoItems } = useContext(TodoItemContext);
+  const [notFound, setNotFound] = useState(false);
   useSocketIO();
 
   useEffect(() => {
@@ -30,7 +31,12 @@ function ListView() {
         method: 'GET',
       });
       if (response.ok && response.data) {
+        setNotFound(false);
         setTodolist(response.data);
+      }
+      if (!response.ok && response.err?.name === 'NotFoundError') {
+        setTodolist(null);
+        setNotFound(true);
       }
     };
 
@@ -55,9 +61,11 @@ function ListView() {
   return (
     <Box display="flex">
       <SidePanel/>
-      <TodoList
-        loading={fetchListLoading || loading}
-      />
+      {notFound ? <h1>Could not find list</h1> : (
+        <TodoList
+          loading={fetchListLoading || loading}
+        />
+      )}
     </Box>
   );
 }
