@@ -74,7 +74,10 @@ const ListOfTodoLists = () => {
       )
     }
 
-    return todoLists.map((todoList) => {
+    const listsSortedByCreatedAt = todoLists.sort((a, b) => {
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    });
+    return listsSortedByCreatedAt.map((todoList) => {
       const isSelected = todoList.publicId === id;
 
       return (
