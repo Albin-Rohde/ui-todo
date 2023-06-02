@@ -4,10 +4,12 @@ import RemoveCircleOutlineOutlinedIcon
 import {
   Box,
   Divider,
+  FormControlLabel,
   IconButton,
   List,
   ListItem,
   ListItemIcon,
+  Switch,
   Tooltip,
 } from '@mui/material';
 import React, { useContext } from 'react';
@@ -23,6 +25,7 @@ const TodoItems = () => {
   const { todoItems, setTodoItems } = useContext(TodoItemContext);
   const { sendRequest } = useHttp();
   const { id } = useParams<{ id: string }>();
+  const [showCompleted, setShowCompleted] = React.useState(true);
 
   const handleAddItemClick = async () => {
     const response = await sendRequest<{
@@ -50,18 +53,19 @@ const TodoItems = () => {
     });
   }
 
-  const getRowBackgroundColor = (index: number) => {
-    return '#f8f8f8'
-    return index % 2 === 0 ? '#e4ebf3' : '#cbddf1';
-  }
-  const todoItemsList = todoItems?.map((item, index) => {
+  const todoItemsList = todoItems?.filter((item) => {
+    if (showCompleted) {
+      return true;
+    }
+    return !item.completed;
+  })?.map((item, index) => {
     return (
       <>
         <Divider/>
         <ListItem sx={{
           paddingLeft: '0',
           width: '100%',
-          backgroundColor: getRowBackgroundColor(index)
+          backgroundColor: '#f8f8f8',
         }} key={item.id}>
           <TodoItemCheckbox
             item={item}
@@ -98,6 +102,14 @@ const TodoItems = () => {
           >
             <AddIcon/> Add item
           </SecondaryButton>
+          <FormControlLabel
+            sx={{ marginLeft: '1rem' }}
+            control={
+              <Switch defaultChecked
+                      onChange={(_, checked) => setShowCompleted(checked)}/>
+            }
+            label="Show completed"
+          />
         </ListItem>
         {todoItemsList}
         <Divider/>
