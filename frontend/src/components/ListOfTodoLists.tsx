@@ -1,16 +1,5 @@
 import AddIcon from '@mui/icons-material/Add';
-import LockIcon from '@mui/icons-material/Lock';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
-import {
-  Box,
-  CircularProgress,
-  IconButton,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Tooltip,
-} from '@mui/material';
+import { Box, CircularProgress, List, ListItem, ListItemText, } from '@mui/material';
 import React, { useContext, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -19,6 +8,7 @@ import useHttp from '../hooks/useHttp';
 import { TodoList } from '../types';
 
 import SecondaryButton from './SecondaryButton';
+import { TodoListOptions } from './TodoListOptions';
 
 
 const ListOfTodoLists = () => {
@@ -86,8 +76,6 @@ const ListOfTodoLists = () => {
 
     return todoLists.map((todoList) => {
       const isSelected = todoList.publicId === id;
-      const readonlyHelpText = 'Readonly, only you can edit this list';
-      const publicHelpText = 'Public, anyone with the link can edit this list';
 
       return (
         <ListItem
@@ -97,27 +85,7 @@ const ListOfTodoLists = () => {
           selected={isSelected}
         >
           <ListItemText primary={todoList.name}/>
-          <ListItemIcon>
-            {todoList.readonly ? (
-              <Tooltip title={readonlyHelpText} arrow>
-                <IconButton onClick={(e) => {
-                  e.stopPropagation();
-                  updateList({ ...todoList, readonly: false })
-                }}>
-                  <LockIcon style={{ fontSize: '1.2rem' }}/>
-                </IconButton>
-              </Tooltip>
-            ) : (
-              <Tooltip title={publicHelpText} arrow>
-                <IconButton onClick={(e) => {
-                  e.stopPropagation();
-                  updateList({ ...todoList, readonly: true })
-                }}>
-                  <LockOpenIcon style={{ fontSize: '1.2rem' }}/>
-                </IconButton>
-              </Tooltip>
-            )}
-          </ListItemIcon>
+          <TodoListOptions todoList={todoList} updateList={updateList}/>
         </ListItem>
       )
     });
