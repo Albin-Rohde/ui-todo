@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { RecentListsContext } from '../contexts/RecentListsContext';
 import useHttp from '../hooks/useHttp';
+import { TodoList } from '../types';
 
 const ListOfRecentLists = () => {
   const { loading: loadingFetchList, sendRequest: sendFetchList } = useHttp();
@@ -12,11 +13,7 @@ const ListOfRecentLists = () => {
   const { recentLists, setRecentlists } = useContext(RecentListsContext);
 
   const fetchTodoLists = async () => {
-    const response = await sendFetchList<[{
-      publicId: string;
-      id: number;
-      name: string;
-    }]>({
+    const response = await sendFetchList<TodoList[]>({
       path: '/todo-list/recent',
       method: 'GET',
     });

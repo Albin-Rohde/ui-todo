@@ -28,6 +28,8 @@ export type TodoList = {
   id: number,
   publicId: string,
   name: string,
+  readonly: boolean,
+  private: boolean,
 }
 
 export type TodoItem = {

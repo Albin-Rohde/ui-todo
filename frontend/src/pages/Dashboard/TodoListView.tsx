@@ -8,6 +8,7 @@ import { TodoListContext } from '../../contexts/TodoListContext';
 import { useAuth } from '../../hooks/useAuth';
 import useHttp from '../../hooks/useHttp';
 import useSocketIO from '../../hooks/useSocketIO';
+import * as t from '../../types';
 
 import { TodoList } from './TodoList';
 
@@ -22,11 +23,7 @@ function ListView() {
 
   useEffect(() => {
     const fetchList = async () => {
-      const response = await sendRequest<{
-        name: string;
-        id: number;
-        publicId: string;
-      }>({
+      const response = await sendRequest<t.TodoList>({
         path: '/todo-list/' + id,
         method: 'GET',
       });
