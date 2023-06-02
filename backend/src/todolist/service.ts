@@ -46,10 +46,11 @@ export class TodoListService {
   }
 
   public async getRecentByUser(user: User) {
-    const recentLists = await this.recentListRepository.find({
-      where: { userId: user.id },
-      relations: ["list"]
-    });
+    const recentLists = await this.recentListRepository.createQueryBuilder("recentList")
+      .innerJoinAndSelect("recentList.list", "todoList")
+      .where("recentList.userId = :userId", { userId: user.id })
+      .andWhere("todoList.private = :private", { private: false })
+      .getMany();
     return recentLists.map(recentList => recentList.list);
   }
 
