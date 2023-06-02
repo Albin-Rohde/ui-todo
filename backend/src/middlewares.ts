@@ -21,7 +21,13 @@ export const loginRequired = async (req: Request, res: Response, next: NextFunct
   }
 }
 
-export const loginRequiredSocket = async (socket: Socket) => {
-  socket.request.session.user = await userService.authUser(socket.request.session.user)
-  socket.request.session.save()
+export const loginRequiredSocket = async (socket: Socket, next: any) => {
+  try {
+    socket.request.session.user = await userService.authUser(socket.request.session.user)
+    socket.request.session.save()
+    next()
+  } catch (err: any) {
+    console.log(err)
+    next(err)
+  }
 }
