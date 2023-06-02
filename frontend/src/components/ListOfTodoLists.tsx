@@ -5,23 +5,22 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { TodoListsContext } from '../contexts/TodoListsContext';
 import useHttp from '../hooks/useHttp';
+import { TodoList } from '../types';
 
 import SecondaryButton from './SecondaryButton';
+import { TodoListOptions } from './TodoListOptions';
 
 
 const ListOfTodoLists = () => {
   const { loading: loadingCreation, sendRequest: sendCreate } = useHttp();
   const { loading: loadingFetchList, sendRequest: sendFetchList } = useHttp();
+  const { sendRequest: sendUpdateList } = useHttp();
   const navigate = useNavigate();
   const { id } = useParams();
   const { todoLists, setTodolists } = useContext(TodoListsContext);
 
   const createTodoList = async () => {
-    const response = await sendCreate<{
-      publicId: string;
-      id: number;
-      name: string;
-    }>({
+    const response = await sendCreate<TodoList>({
       path: '/todo-list',
       method: 'POST',
       body: {
@@ -36,11 +35,7 @@ const ListOfTodoLists = () => {
   }
 
   const fetchTodoLists = async () => {
-    const response = await sendFetchList<[{
-      publicId: string;
-      id: number;
-      name: string;
-    }]>({
+    const response = await sendFetchList<TodoList[]>({
       path: '/todo-list/my',
       method: 'GET',
     });
@@ -54,6 +49,24 @@ const ListOfTodoLists = () => {
     fetchTodoLists();
   }, []);
 
+  const updateList = async (list: TodoList) => {
+    await sendUpdateList<TodoList>({
+      path: '/todo-list/' + id,
+      method: 'PUT',
+      body: {
+        ...list,
+      },
+    });
+    setTodolists((prev: TodoList[]) => {
+      return prev.map((todoList) => {
+        if (todoList.id === list.id) {
+          return list;
+        }
+        return todoList;
+      });
+    });
+  }
+
   const listItems = () => {
     if (loadingFetchList) {
       return (
@@ -61,8 +74,12 @@ const ListOfTodoLists = () => {
       )
     }
 
-    return todoLists.map((todoList) => {
+    const listsSortedByCreatedAt = todoLists.sort((a, b) => {
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    });
+    return listsSortedByCreatedAt.map((todoList) => {
       const isSelected = todoList.publicId === id;
+
       return (
         <ListItem
           key={todoList.id}
@@ -71,6 +88,7 @@ const ListOfTodoLists = () => {
           selected={isSelected}
         >
           <ListItemText primary={todoList.name}/>
+          <TodoListOptions todoList={todoList} updateList={updateList}/>
         </ListItem>
       )
     });
