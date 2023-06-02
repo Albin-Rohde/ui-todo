@@ -32,6 +32,7 @@ export class TodoItemController {
   ) {
     const { text, completed } = await createTodoItemSchema.validate(data);
     const todoList = await this.todoItemService.create({
+      user,
       publicListId: listId,
       text,
       completed,
@@ -54,6 +55,7 @@ export class TodoItemController {
   ) {
     const { text, completed } = await createTodoItemSchema.validate(data);
     const todoList = await this.todoItemService.update({
+      user,
       id,
       publicListId: listId,
       text,
@@ -71,9 +73,11 @@ export class TodoItemController {
   @UseBefore(loginRequired)
   async deleteTodoItem(
     @Param("id") id: number,
-    @Param("listId") listId: string
+    @Param("listId") listId: string,
+    @CurrentUser() user: User
   ) {
     await this.todoItemService.delete({
+      user,
       id,
       publicListId: listId,
     });

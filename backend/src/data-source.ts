@@ -12,6 +12,7 @@ import { RecentList } from "./todolist/entity/RecentList";
 import {
   AddRecentListTable1685616756505
 } from "./migrations/1685616756505-AddRecentListTable";
+import { Migration1685698931722 } from "./migrations/1685698931722-migration";
 
 dotenv.config();
 
@@ -37,14 +38,7 @@ export const db = new DataSource({
     AddUserTable1685139437466,
     AddTodoTable1685522666796,
     AddTodoItemTable1685604745524,
-    AddRecentListTable1685616756505
+    AddRecentListTable1685616756505,
+    Migration1685698931722,
   ],
 });
-
-/*
-Create migration
-npm run typeorm migration:generate -- ./src/migrations/AddUserTable -d ./src/data-source.ts
-
-Run migrations
-npm run typeorm migration:run -- -d ./src/data-source.ts
-*/

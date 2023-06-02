@@ -29,6 +29,7 @@ describe("TodoItemService", () => {
       const user = await new UserFactory().create();
       const todoList = await new TodoListFactory().create({ user });
       const todoItem = await todoItemService.create({
+        user,
         publicListId: todoList.publicId,
         text: faker.lorem.text(),
         completed: false,
@@ -42,6 +43,7 @@ describe("TodoItemService", () => {
       const user = await new UserFactory().create();
       await expect(
         todoItemService.create({
+          user,
           publicListId: faker.string.uuid(),
           text: faker.lorem.text(),
           completed: false,
@@ -55,6 +57,7 @@ describe("TodoItemService", () => {
       const todoList = await new TodoListFactory().create({ user: user2 });
 
       await todoItemService.create({
+        user,
         publicListId: todoList.publicId,
         text: faker.lorem.text(),
         completed: false,
@@ -76,6 +79,7 @@ describe("TodoItemService", () => {
 
       const newText = faker.lorem.text();
       await todoItemService.update({
+        user,
         id: todoItem.id,
         publicListId: todoList.publicId,
         text: newText,

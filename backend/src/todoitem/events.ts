@@ -12,6 +12,7 @@ export const handleUpdateTodoItem = (socket: Socket) => async (data: {
 
   try {
     const updatedItem = await todoItemService.update({
+      user: socket.request.session.user,
       publicListId: listId,
       id,
       text,
@@ -20,10 +21,9 @@ export const handleUpdateTodoItem = (socket: Socket) => async (data: {
     socket.broadcast.to(listId).emit("todoitem.item-updated", todoItemService.responseFormat(updatedItem));
   } catch (err: any) {
     if (err?.name === "EntityNotFoundError") {
-      console.log(`user: ${socket.request.session.user.id} tried to update item: ${id} but it doesn't exist`);
       return;
     }
-    throw err;
+    console.log(err);
   }
 }
 
@@ -37,6 +37,7 @@ export const handleCreateTodoItem = (socket: Socket) => async (data: {
 
   try {
     const newItem = await todoItemService.create({
+      user: socket.request.session.user,
       publicListId: listId,
       text,
       completed
@@ -46,10 +47,9 @@ export const handleCreateTodoItem = (socket: Socket) => async (data: {
     socket.broadcast.to(listId).emit("todoitem.item-created", todoItemService.responseFormat(newItem));
   } catch (err: any) {
     if (err?.name === "EntityNotFoundError") {
-      console.log(`user: ${socket.request.session.user.id} tried to create item: ${text} but it doesn't exist`);
       return;
     }
-    throw err;
+    console.log(err)
   }
 }
 

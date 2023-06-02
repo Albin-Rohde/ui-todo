@@ -6,7 +6,7 @@ export const handleJoinRoom = (socket: Socket) => async (data: { id: string }) =
   const todoListService = new TodoListService();
 
   try {
-    await todoListService.getByPublicId(id)
+    await todoListService.getByPublicId(id, socket.request.session.user)
     socket.join(id);
     socket.emit("joined", id);
   } catch (err: any) {
@@ -14,7 +14,7 @@ export const handleJoinRoom = (socket: Socket) => async (data: { id: string }) =
       console.log(`user: ${socket.request.session.user.id} tried to join room: ${id} but it doesn't exist`);
       return;
     }
-    throw err;
+    console.error(err);
   }
 }
 
@@ -23,7 +23,7 @@ export const handleLeaveRoom = (socket: Socket) => async (data: { id: string }) 
   const todoListService = new TodoListService();
 
   try {
-    await todoListService.getByPublicId(id)
+    await todoListService.getByPublicId(id, socket.request.session.user)
     socket.leave(id);
     socket.emit("left", id);
   } catch (err: any) {
@@ -31,7 +31,7 @@ export const handleLeaveRoom = (socket: Socket) => async (data: { id: string }) 
       console.log(`user: ${socket.request.session.user.id} tried to leave room: ${id} but it doesn't exist`);
       return;
     }
-    throw err;
+    console.error(err);
   }
 }
 

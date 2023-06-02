@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   Generated,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -10,6 +11,7 @@ import {
 import { User } from "../../user/entity/User";
 import { TodoItem } from "../../todoitem/entity/TodoItem";
 
+@Index(["publicId"])
 @Entity("todo_list")
 export class TodoList {
   @PrimaryGeneratedColumn()
@@ -34,4 +36,13 @@ export class TodoList {
 
   @OneToMany(() => TodoItem, todoItem => todoItem.list)
   items!: TodoItem[];
+
+  @Column({ name: "created_at", default: () => "CURRENT_TIMESTAMP" })
+  createdAt!: Date;
+
+  @Column({ default: false })
+  readonly!: boolean;
+
+  @Column({ default: false })
+  private!: boolean;
 }
