@@ -6,7 +6,7 @@ export const handleJoinRoom = (socket: Socket) => async (data: { id: string }) =
   const todoListService = new TodoListService();
 
   try {
-    await todoListService.getByPublicId(id)
+    await todoListService.getByPublicId(id, socket.request.session.user)
     socket.join(id);
     socket.emit("joined", id);
   } catch (err: any) {
@@ -23,7 +23,7 @@ export const handleLeaveRoom = (socket: Socket) => async (data: { id: string }) 
   const todoListService = new TodoListService();
 
   try {
-    await todoListService.getByPublicId(id)
+    await todoListService.getByPublicId(id, socket.request.session.user)
     socket.leave(id);
     socket.emit("left", id);
   } catch (err: any) {

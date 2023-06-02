@@ -32,7 +32,7 @@ export class TodoListService {
     return this.todoListRepository.find({ where: { userId: user.id } });
   }
 
-  public async getByPublicId(publicId: string, user?: User) {
+  public async getByPublicId(publicId: string, user: User) {
     const todoList = await this.todoListRepository.findOneOrFail({
       where: {
         publicId: publicId

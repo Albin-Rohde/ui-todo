@@ -12,6 +12,7 @@ export const handleUpdateTodoItem = (socket: Socket) => async (data: {
 
   try {
     const updatedItem = await todoItemService.update({
+      user: socket.request.session.user,
       publicListId: listId,
       id,
       text,
@@ -37,6 +38,7 @@ export const handleCreateTodoItem = (socket: Socket) => async (data: {
 
   try {
     const newItem = await todoItemService.create({
+      user: socket.request.session.user,
       publicListId: listId,
       text,
       completed
