@@ -3,6 +3,7 @@ import { TodoListService } from "../service";
 import { TodoListFactory, UserFactory } from "../../test-utils/factories";
 import { faker } from "@faker-js/faker";
 import { ValidationError } from "yup";
+import { EntityNotFoundError } from "typeorm";
 
 describe("TodolistService", () => {
   let todoListService: TodoListService;
@@ -104,9 +105,18 @@ describe("TodolistService", () => {
       const user = await new UserFactory().create();
       const todoList = await new TodoListFactory().create({ user });
       const newName = faker.lorem.words(2);
-      const updatedTodoList = await todoListService.update(user, todoList.publicId, newName);
+      const updatedTodoList = await todoListService.update({
+        user,
+        publicId: todoList.publicId,
+        name: newName,
+        private: false,
+        readonly: false,
+      });
+
       expect(updatedTodoList).toBeDefined();
       expect(updatedTodoList?.name).toEqual(newName);
+      expect(updatedTodoList?.private).toEqual(false);
+      expect(updatedTodoList?.readonly).toEqual(false);
     });
 
     it("should throw on non unique name", async () => {
@@ -114,7 +124,46 @@ describe("TodolistService", () => {
       const todoList = await new TodoListFactory().create({ user });
       const todoList2 = await new TodoListFactory().create({ user });
       await expect(
-        todoListService.update(user, todoList.publicId, todoList2.name)
+        todoListService.update({
+          user,
+          publicId: todoList.publicId,
+          name: todoList2.name,
+          private: false,
+          readonly: false,
+        })
+      ).rejects.toThrowError(ValidationError);
+    });
+
+    it("should throw 'EntityNotFoundError' if list is private and user is not owner", async () => {
+      const owner = await new UserFactory().create();
+      const todoList = await new TodoListFactory().create({ user: owner, private: true });
+      const user = await new UserFactory().create();
+      await expect(
+        todoListService.update({
+          user,
+          publicId: todoList.publicId,
+          name: todoList.name,
+          private: false,
+          readonly: false,
+        })
+      ).rejects.toThrowError(EntityNotFoundError);
+    });
+
+    it("should throw 'ValidationError' if list is readonly and user is not owner", async () => {
+      const owner = await new UserFactory().create();
+      const todoList = await new TodoListFactory().create({
+        user: owner,
+        readonly: true
+      });
+      const user = await new UserFactory().create();
+      await expect(
+        todoListService.update({
+          user,
+          publicId: todoList.publicId,
+          name: faker.lorem.word(),
+          private: false,
+          readonly: false,
+        })
       ).rejects.toThrowError(ValidationError);
     });
   });

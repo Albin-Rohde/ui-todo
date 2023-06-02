@@ -66,10 +66,16 @@ export class TodoListController {
   @Put("/:id")
   @UseBefore(loginRequired)
   async updateTodoList(@CurrentUser() user: User, @Param("id") id: string, @Body() body: {
-    name: string
+    name: string,
+    readonly: boolean,
+    private: boolean,
   }) {
-    const { name } = await updateTodoListSchema.validate(body);
-    const todoList = await this.todoListServie.update(user, id, name)
+    const validatedInput = await updateTodoListSchema.validate(body);
+    const todoList = await this.todoListServie.update({
+      user,
+      publicId: id,
+      ...validatedInput,
+    });
     return {
       ok: true,
       err: null,

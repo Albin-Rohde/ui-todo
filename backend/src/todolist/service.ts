@@ -1,10 +1,18 @@
 import { User } from "../user/entity/User";
-import { QueryFailedError, Repository } from "typeorm";
+import { EntityNotFoundError, Not, QueryFailedError, Repository } from "typeorm";
 import { db } from "../data-source";
 import { TodoList } from "./entity/TodoList";
 import { ValidationError } from "yup";
 import { RecentList } from "./entity/RecentList";
 
+
+type UpdateTodoListInput = {
+  user: User,
+  publicId: TodoList["publicId"],
+  name: TodoList["name"]
+  private: TodoList["private"]
+  readonly: TodoList["readonly"]
+}
 
 export class TodoListService {
   constructor(
@@ -44,15 +52,28 @@ export class TodoListService {
     return recentLists.map(recentList => recentList.list);
   }
 
-  public async update(user: User, publicId: string, name: string) {
+  public async update(input: UpdateTodoListInput) {
+    const { user, publicId, name, private: isPrivate, readonly: isReadonly } = input;
     const existingList = await this.todoListRepository.exist({
-      where: { userId: user.id, name }
+      where: { userId: user.id, name, publicId: Not(publicId) }
     });
     if (existingList) {
       throw new ValidationError("A list with this name already exists");
     }
     const todoList = await this.getByPublicId(publicId, user);
+
+    if (todoList.userId !== user.id) {
+      if (todoList.readonly) {
+        throw new ValidationError("This list is readonly");
+      }
+      if (todoList.private) {
+        throw new EntityNotFoundError(TodoList, "Tried to update private list");
+      }
+    }
+
     todoList.name = name;
+    todoList.private = isPrivate;
+    todoList.readonly = isReadonly;
     return this.todoListRepository.save(todoList);
   }
 
