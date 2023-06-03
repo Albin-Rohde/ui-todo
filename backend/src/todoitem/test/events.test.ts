@@ -1,7 +1,11 @@
 import { faker } from "@faker-js/faker";
 import { db } from "../../data-source";
 import { TodoItemFactory, TodoListFactory } from "../../test-utils/factories";
-import { handleCreateTodoItem, handleUpdateTodoItem } from "../events";
+import {
+  handleCreateTodoItem,
+  handleUpdateCursorPos,
+  handleUpdateTodoItem
+} from "../events";
 import { Socket } from "socket.io";
 
 const mockEmit = jest.fn();
@@ -115,6 +119,59 @@ describe("TodoItem EventHandlers", () => {
         listId: todoList.publicId,
         text: text,
         completed: true
+      });
+
+      expect(mockTo).not.toHaveBeenCalled();
+      expect(mockEmit).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("todoitem.update-cursor-pos", () => {
+    it("should update position and broadcast the updated position, along with the user who made the update", async () => {
+      const todoList = await new TodoListFactory().create();
+      const todoItem = await new TodoItemFactory().create({ list: todoList });
+
+      const cursorStart = faker.number.int({ min: 0, max: 80 });
+      const cursorEnd = faker.number.int({ min: 80, max: 100 });
+      await handleUpdateCursorPos(socket as unknown as Socket)({
+        listId: todoList.publicId,
+        itemId: todoItem.id,
+        cursorStart,
+        cursorEnd,
+      });
+
+      expect(mockTo).toHaveBeenCalledWith(todoItem.list.publicId);
+      expect(mockEmit).toHaveBeenCalledWith("todoitem.cursor-pos-updated", {
+        itemId: todoItem.id,
+        listId: todoItem.list.publicId,
+        cursorStart,
+        cursorEnd,
+        userId: socket.request.session.user.id,
+      });
+    });
+
+    it("should not update cursor position if list does not exist", async () => {
+      const todoItem = await new TodoItemFactory().create();
+
+      await handleUpdateCursorPos(socket as unknown as Socket)({
+        listId: faker.string.uuid(),
+        itemId: todoItem.id,
+        cursorStart: faker.number.int({ min: 0, max: 80 }),
+        cursorEnd: faker.number.int({ min: 80, max: 100 }),
+      });
+
+      expect(mockTo).not.toHaveBeenCalled();
+      expect(mockEmit).not.toHaveBeenCalled();
+    });
+
+    it("should not update cursor position if item does not exist", async () => {
+      const todoList = await new TodoListFactory().create();
+
+      await handleUpdateCursorPos(socket as unknown as Socket)({
+        itemId: faker.number.int({ min: 1, max: 1000 }),
+        listId: todoList.publicId,
+        cursorStart: faker.number.int({ min: 0, max: 80 }),
+        cursorEnd: faker.number.int({ min: 80, max: 100 }),
       });
 
       expect(mockTo).not.toHaveBeenCalled();

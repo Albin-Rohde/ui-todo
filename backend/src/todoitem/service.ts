@@ -80,6 +80,11 @@ export class TodoItemService {
     return this.todoItemRepository.find({ where: { listId: list.id }, order: { id: "ASC" } });
   }
 
+  // TODO: This should also check that the user has access to the list that the item is in
+  public async getById(user: User, id: number) {
+    return await this.todoItemRepository.findOneOrFail({ where: { id } });
+  }
+
   public responseFormat(todoItem: TodoItem) {
     return {
       id: todoItem.id,
