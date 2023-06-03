@@ -1,5 +1,5 @@
 import { Box, Checkbox } from '@mui/material';
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { SocketContext } from '../contexts/SocketContext';
@@ -18,6 +18,7 @@ const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
   const { setTodoItems } = useContext(TodoItemContext)
   const { id } = useParams()
   const { socket } = useContext(SocketContext);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const sendCursorPos = (event: React.ChangeEvent | React.MouseEvent) => {
     const input = event?.target as HTMLInputElement;
@@ -107,10 +108,11 @@ const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
           onBlur={handleBlur}
           textAlign="left"
           marginTop="0px"
+          inputRef={inputRef}
           onFocus={handleFocus}
           onMouseUp={handleMouseUp}
         />
-        <FakeCursor item={props.item}/>
+        <FakeCursor item={props.item} inputRef={inputRef}/>
       </Box>
     </Box>
   )

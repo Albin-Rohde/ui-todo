@@ -10,6 +10,7 @@ interface TypographInputProps {
   onMouseUp?: (event: React.MouseEvent) => void;
   textAlign: 'left' | 'center' | 'right';
   marginTop?: string;
+  inputRef?: React.RefObject<HTMLInputElement>;
 }
 
 const TypographInput = (props: TypographInputProps) => {
@@ -46,6 +47,7 @@ const TypographInput = (props: TypographInputProps) => {
         },
       }}
       fullWidth
+      inputRef={props.inputRef}
     />
   )
 }
