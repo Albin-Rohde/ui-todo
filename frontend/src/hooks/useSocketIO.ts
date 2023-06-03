@@ -56,10 +56,9 @@ const useSocketIO = () => {
       });
 
       socket.on('todoitem.item-created', (data: TodoItem) => {
-        if (todoItems) {
-          const newItems = [...todoItems, data];
-          setTodoItems(newItems);
-        }
+        setTodoItems((prev: TodoItem[]) => {
+          return [...prev, data];
+        });
       });
 
       socket?.on('todoitem.cursor-pos-updated', (data: CursorPosition) => {

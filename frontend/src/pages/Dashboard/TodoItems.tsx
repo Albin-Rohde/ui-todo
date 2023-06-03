@@ -17,6 +17,7 @@ import { useParams } from 'react-router-dom';
 
 import SecondaryButton from '../../components/SecondaryButton';
 import TodoItemCheckbox from '../../components/TodoItemCheckbox';
+import { SocketContext } from '../../contexts/SocketContext';
 import { TodoItemContext } from '../../contexts/TodoItemsContext';
 import useHttp from '../../hooks/useHttp';
 import { TodoItem } from '../../types';
@@ -26,6 +27,7 @@ const TodoItems = () => {
   const { sendRequest } = useHttp();
   const { id } = useParams<{ id: string }>();
   const [showCompleted, setShowCompleted] = React.useState(true);
+  const { socket } = useContext(SocketContext);
 
   const handleAddItemClick = async () => {
     const response = await sendRequest<{
@@ -40,6 +42,7 @@ const TodoItems = () => {
     if (!response.ok || !response.data) {
       return;
     }
+    socket?.emit('todoitem.notify-new-todo-item', { listId: id, id: response.data.id });
     setTodoItems([...todoItems, response.data]);
   };
 
