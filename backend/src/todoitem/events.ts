@@ -1,5 +1,6 @@
 import { Socket } from "socket.io";
 import { TodoItemService } from "./service";
+import { TodoListService } from "../todolist/service";
 
 export const handleUpdateTodoItem = (socket: Socket) => async (data: {
   listId: string,
@@ -42,8 +43,6 @@ export const handleCreateTodoItem = (socket: Socket) => async (data: {
       text,
       completed
     })
-    console.log("handling create item event")
-    console.log(data)
     socket.broadcast.to(listId).emit("todoitem.item-created", todoItemService.responseFormat(newItem));
   } catch (err: any) {
     if (err?.name === "EntityNotFoundError") {
@@ -53,6 +52,37 @@ export const handleCreateTodoItem = (socket: Socket) => async (data: {
   }
 }
 
+export const handleUpdateCursorPos = (socket: Socket) => async (data: {
+  listId: string,
+  itemId: number,
+  cursorStart: number | null,
+  cursorEnd: number | null
+}) => {
+  const todoItemService = new TodoItemService();
+  const todoListService = new TodoListService();
+  const { listId, itemId, cursorStart, cursorEnd } = data;
+
+  try {
+    // verify that list exists
+    await todoListService.getByPublicId(listId, socket.request.session.user);
+    // verify that item exists
+    const item = await todoItemService.getById(socket.request.session.user, itemId)
+    const cursorPosData = {
+      listId,
+      itemId: item.id,
+      cursorStart,
+      cursorEnd,
+      userId: socket.request.session.user.id,
+      username: socket.request.session.user.username,
+    }
+    socket.broadcast.to(listId).emit("todoitem.cursor-pos-updated", cursorPosData);
+  } catch (err: any) {
+    if (err?.name === "EntityNotFoundError") {
+      return;
+    }
+    console.log(err);
+  }
+}
 
 const listeners = [
   {
@@ -62,6 +92,10 @@ const listeners = [
   {
     event: "todoitem.create-todo-item",
     handler: handleCreateTodoItem,
+  },
+  {
+    event: "todoitem.update-cursor-pos",
+    handler: handleUpdateCursorPos,
   }
 ]
 
