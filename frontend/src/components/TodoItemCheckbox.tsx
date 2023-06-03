@@ -4,9 +4,9 @@ import { useParams } from 'react-router-dom';
 
 import { SocketContext } from '../contexts/SocketContext';
 import { TodoItemContext } from '../contexts/TodoItemsContext';
-import useHttp from '../hooks/useHttp';
 import { TodoItem } from '../types';
 
+import { FakeCursor } from './FakeCursor';
 import TypographInput from './TypographInput';
 
 interface TodoItemCheckboxProps {
@@ -17,9 +17,26 @@ interface TodoItemCheckboxProps {
 const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
   const { setTodoItems } = useContext(TodoItemContext)
   const { id } = useParams()
-  const { sendRequest: updateNameRequest } = useHttp();
-  const { sendRequest: updateCheckedRequest } = useHttp();
   const { socket } = useContext(SocketContext);
+
+  const sendCursorPos = (event: React.ChangeEvent | React.MouseEvent) => {
+    const input = event?.target as HTMLInputElement;
+    socket?.emit('todoitem.update-cursor-pos', {
+      listId: id,
+      itemId: props.item.id,
+      cursorStart: input.selectionStart,
+      cursorEnd: input.selectionEnd,
+    });
+  };
+
+  const sendItemUpdated = (item: TodoItem) => {
+    socket?.emit('todoitem.update-todo-item', {
+      listId: id,
+      id: item.id,
+      text: item.text,
+      completed: item.completed,
+    });
+  }
 
   const handleCheckboxClick = () => {
     setTodoItems((prevItems) =>
@@ -33,16 +50,10 @@ const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
         return item;
       })
     );
-
-    socket?.emit('todoitem.update-todo-item', {
-      listId: id,
-      id: props.item.id,
-      text: props.item.text,
-      completed: !props.item.completed,
-    });
+    sendItemUpdated({ ...props.item, completed: !props.item.completed })
   };
 
-  const handleChangeText = (text: string) => {
+  const handleChangeText = (text: string, event?: React.ChangeEvent | React.MouseEvent) => {
     setTodoItems((prevItems) =>
       prevItems.map((item) => {
         if (item.id === props.item.id) {
@@ -54,13 +65,26 @@ const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
         return item;
       })
     );
-    socket?.emit('todoitem.update-todo-item', {
-      listId: id,
-      id: props.item.id,
-      completed: props.item.completed,
-      text,
-    })
+    sendItemUpdated({ ...props.item, text })
+    event && sendCursorPos(event)
   };
+
+  const handleBlur = (_event: React.ChangeEvent) => {
+    socket?.emit('todoitem.update-cursor-pos', {
+      listId: id,
+      itemId: props.item.id,
+      cursorStart: null,
+      cursorEnd: null,
+    });
+  };
+
+  const handleFocus = (event: React.ChangeEvent) => {
+    sendCursorPos(event)
+  }
+
+  const handleMouseUp = (event: React.MouseEvent) => {
+    sendCursorPos(event)
+  }
 
   return (
     <Box
@@ -80,9 +104,13 @@ const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
           text={props.item.text}
           fontSize={props.fontSize}
           onChange={handleChangeText}
+          onBlur={handleBlur}
           textAlign="left"
           marginTop="0px"
+          onFocus={handleFocus}
+          onMouseUp={handleMouseUp}
         />
+        <FakeCursor item={props.item}/>
       </Box>
     </Box>
   )
