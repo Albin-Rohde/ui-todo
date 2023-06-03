@@ -19,7 +19,8 @@ function ListView() {
   const { setTodolist } = useContext(TodoListContext);
   const { setTodoItems } = useContext(TodoItemContext);
   const [notFound, setNotFound] = useState(false);
-  useSocketIO();
+  const [prevId, setPrevId] = useState<string | null>(null);
+  const { socket, isConnected } = useSocketIO();
 
   useEffect(() => {
     const fetchList = async () => {
@@ -54,6 +55,25 @@ function ListView() {
     fetchItems();
     fetchList();
   }, [id]);
+
+  useEffect(() => {
+    if (isConnected && id) {
+      joinListRoom(id);
+    }
+  }, [isConnected, id]);
+
+  const joinListRoom = (publicId: string) => {
+    if (prevId && prevId == publicId) {
+      // we do not need to join a room we are already in
+      return;
+    }
+    socket?.emit('todolist.join-room', { id: publicId });
+    // if prevId is different from the new list id, we need to leave the previous room
+    if (prevId && prevId !== publicId) {
+      socket?.emit('todolist.leave-room', { id: prevId });
+    }
+    setPrevId(publicId);
+  }
 
   return (
     <Box display="flex">

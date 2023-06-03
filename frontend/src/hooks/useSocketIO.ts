@@ -1,16 +1,17 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { io } from 'socket.io-client';
 
 import { SocketContext } from '../contexts/SocketContext';
 import { TodoItemContext } from '../contexts/TodoItemsContext';
 import { TodoListContext } from '../contexts/TodoListContext';
-import { TodoItem, TodoList } from '../types';
+import { UserContext } from '../contexts/UserContext';
+import { CursorPosition, TodoItem, TodoList } from '../types';
 
 const useSocketIO = () => {
   const { socket, setSocket, isConnected, setIsConnected } = useContext(SocketContext);
   const { todoList, setTodolist } = useContext(TodoListContext)
-  const { todoItems, setTodoItems } = useContext(TodoItemContext);
-  const [prevId, setPrevId] = useState<string | null>(null);
+  const { todoItems, setTodoItems, setCursorPositions } = useContext(TodoItemContext);
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     if (socket) {
@@ -34,18 +35,9 @@ const useSocketIO = () => {
   }, []);
 
   useEffect(() => {
-    if (todoList && socket && isConnected) {
-      if (prevId !== null && prevId !== todoList.publicId) {
-        socket.emit('todolist.leave-room', { id: prevId });
-      }
-      socket.emit('todolist.join-room', { id: todoList.publicId });
-      setPrevId(todoList.publicId);
-    }
-  }, [todoList]);
-
-  useEffect(() => {
     if (socket && !isConnected) {
       socket.connect();
+
       socket.on('todolist.list-updated', (data: TodoList) => {
         if (todoList && data.id === todoList.id) {
           setTodolist(data);
@@ -70,11 +62,27 @@ const useSocketIO = () => {
         }
       });
 
+      socket?.on('todoitem.cursor-pos-updated', (data: CursorPosition) => {
+        setCursorPositions((prev) => {
+          // remove old cursor position
+          const filtered = prev.filter((cursorPoss) => {
+            return cursorPoss.userId !== user?.id;
+          });
+          // add new cursor position
+          return [
+            ...filtered,
+            data,
+          ];
+        });
+      });
+
       socket.on('connect', () => {
         setIsConnected(true);
       })
     }
   }, [socket]);
+
+  return { socket, isConnected };
 };
 
 

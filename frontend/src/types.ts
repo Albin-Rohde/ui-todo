@@ -20,6 +20,7 @@ export type RestResponse<T> = {
 }
 
 export type User = {
+  id: number,
   email: string,
   username: string,
 }
@@ -37,4 +38,13 @@ export type TodoItem = {
   id: number,
   text: string,
   completed: boolean,
+}
+
+export type CursorPosition = {
+  userId: number,
+  username: string,
+  itemId: number,
+  listId: string,
+  cursorStart: number, // String index of todoItem input field
+  cursorEnd: number, // String index of todoItem input field
 }
