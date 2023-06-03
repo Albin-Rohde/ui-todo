@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker";
 import { db } from "../../data-source";
 import { TodoItemFactory, TodoListFactory } from "../../test-utils/factories";
 import {
-  handleCreateTodoItem,
+  handleNotifyNewItem,
   handleUpdateCursorPos,
   handleUpdateTodoItem
 } from "../events";
@@ -40,32 +40,42 @@ describe("TodoItem EventHandlers", () => {
     await db.close();
   });
 
-  describe("todoitem.create", () => {
-    it("should create a todoitem and broadcast the new item", async () => {
+  describe("todoitem.notify-new-todo-item", () => {
+    it("should broadcast that a new item has been created", async () => {
       const todoList = await new TodoListFactory().create();
+      const todoItem = await new TodoItemFactory().create({ list: todoList });
 
-      const text = faker.lorem.sentence();
-      await handleCreateTodoItem(socket as unknown as Socket)({
+      await handleNotifyNewItem(socket as unknown as Socket)({
         listId: todoList.publicId,
-        text: text,
-        completed: true
+        id: todoItem.id
       });
 
       expect(mockTo).toHaveBeenCalledWith(todoList.publicId);
       expect(mockEmit).toHaveBeenCalledWith("todoitem.item-created", {
         id: 1,
-        text: text,
-        completed: true,
+        text: todoItem.text,
+        completed: todoItem.completed,
         listId: todoList.id,
       });
     });
 
-    it("should not create a todoitem if list does not exist", async () => {
+    it("should not broadcast a todoitem if list does not exist", async () => {
       const text = faker.lorem.sentence();
-      await handleCreateTodoItem(socket as unknown as Socket)({
+      await handleNotifyNewItem(socket as unknown as Socket)({
         listId: faker.string.uuid(),
-        text: text,
-        completed: true
+        id: faker.number.int({ min: 1, max: 1000 }),
+      });
+
+      expect(mockTo).not.toHaveBeenCalled();
+      expect(mockEmit).not.toHaveBeenCalled();
+    });
+
+    it("should not broadcast a todoitem if item does not exist", async () => {
+      const todoList = await new TodoListFactory().create();
+
+      await handleNotifyNewItem(socket as unknown as Socket)({
+        listId: todoList.publicId,
+        id: faker.number.int({ min: 1, max: 1000 }),
       });
 
       expect(mockTo).not.toHaveBeenCalled();

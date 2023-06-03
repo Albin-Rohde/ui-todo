@@ -28,22 +28,16 @@ export const handleUpdateTodoItem = (socket: Socket) => async (data: {
   }
 }
 
-export const handleCreateTodoItem = (socket: Socket) => async (data: {
+export const handleNotifyNewItem = (socket: Socket) => async (data: {
   listId: string,
-  text: string,
-  completed: boolean
+  id: number,
 }) => {
   const todoItemService = new TodoItemService();
-  const { listId, text, completed } = data;
+  const { listId, id } = data;
 
   try {
-    const newItem = await todoItemService.create({
-      user: socket.request.session.user,
-      publicListId: listId,
-      text,
-      completed
-    })
-    socket.broadcast.to(listId).emit("todoitem.item-created", todoItemService.responseFormat(newItem));
+    const item = await todoItemService.getById(socket.request.session.user, id);
+    socket.broadcast.to(listId).emit("todoitem.item-created", todoItemService.responseFormat(item));
   } catch (err: any) {
     if (err?.name === "EntityNotFoundError") {
       return;
@@ -90,8 +84,8 @@ const listeners = [
     handler: handleUpdateTodoItem,
   },
   {
-    event: "todoitem.create-todo-item",
-    handler: handleCreateTodoItem,
+    event: "todoitem.notify-new-todo-item",
+    handler: handleNotifyNewItem,
   },
   {
     event: "todoitem.update-cursor-pos",
