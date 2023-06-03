@@ -13,6 +13,7 @@ import {
   AddRecentListTable1685616756505
 } from "./migrations/1685616756505-AddRecentListTable";
 import { Migration1685698931722 } from "./migrations/1685698931722-migration";
+import { Migration1685836052810 } from "./migrations/1685836052810-migration";
 
 dotenv.config();
 
@@ -40,5 +41,6 @@ export const db = new DataSource({
     AddTodoItemTable1685604745524,
     AddRecentListTable1685616756505,
     Migration1685698931722,
+    Migration1685836052810,
   ],
 });

@@ -62,6 +62,7 @@ export class TodoItemFactory extends Factory<TodoItem> {
       completed: false,
       list: new EagerInstanceAttribute((instance) => new SingleSubfactory(TodoListFactory, { items: [instance] })),
       listId: new EagerInstanceAttribute((instance) => instance.list.id),
+      parentItemId: null,
     }
   }
 }
