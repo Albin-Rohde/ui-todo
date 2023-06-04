@@ -29,12 +29,8 @@ const TodoItems = () => {
   const [showCompleted, setShowCompleted] = React.useState(true);
   const { socket } = useContext(SocketContext);
 
-  const handleAddItemClick = async () => {
-    const response = await sendRequest<{
-      id: number;
-      text: string;
-      completed: boolean;
-    }>({
+  const handleAddItemClick = async (parentId?: number) => {
+    const response = await sendRequest<TodoItem>({
       path: `/todo-list/${id}/todo-item`,
       method: 'POST',
     });

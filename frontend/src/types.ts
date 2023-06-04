@@ -38,6 +38,7 @@ export type TodoItem = {
   id: number,
   text: string,
   completed: boolean,
+  parentItemId: number | null,
 }
 
 export type CursorPosition = {
