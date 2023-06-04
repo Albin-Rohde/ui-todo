@@ -3,7 +3,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import RemoveCircleOutlineOutlinedIcon
   from '@mui/icons-material/RemoveCircleOutlineOutlined';
-import { IconButton, ListItem, ListItemIcon, Tooltip } from '@mui/material';
+import { IconButton, ListItem, ListItemIcon, Tooltip, Typography } from '@mui/material';
 import React, { useContext } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -15,10 +15,11 @@ import { TodoItem } from '../../types';
 interface TodoItemRowProps {
   item: TodoItem;
   handleAddItemClick: (item: TodoItem) => void;
-  paddingLeft: number;
+  handleCollapse: () => void;
   hasSubItems: boolean;
   isExpanded: boolean;
-  handleCollapse: () => void;
+  count: number;
+  paddingLeft: number;
 }
 
 export const TodoItemRow = (props: TodoItemRowProps) => {
@@ -61,14 +62,16 @@ export const TodoItemRow = (props: TodoItemRowProps) => {
       {props.hasSubItems && (
         <ListItemIcon
           sx={{ margin: 0, padding: 0, minWidth: '24px' }}>
-          <Tooltip title={props.isExpanded ? 'Collapse sub-items' : 'Expand sub-items'}>
-            <IconButton
-              sx={{ padding: 0 }}
-              onClick={() => props.handleCollapse()}
-            >
-              {getChevron()}
-            </IconButton>
+          <Tooltip title={'Number of sub-items'}>
+            <Typography variant={'body2'}
+                        sx={{ marginTop: '2px' }}>{props.count}</Typography>
           </Tooltip>
+          <IconButton
+            sx={{ padding: 0 }}
+            onClick={() => props.handleCollapse()}
+          >
+            {getChevron()}
+          </IconButton>
         </ListItemIcon>
       )}
       <ListItemIcon

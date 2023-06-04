@@ -36,6 +36,19 @@ export const TodoItemListItems = (props: TodoItemListItemsProps) => {
     }
   });
 
+  const getTotalCount = (parentId?: number | null): number => {
+    const childItems = parentId ? childItemsMap.get(parentId) : null;
+    if (!childItems) {
+      return 0;
+    }
+
+    let count = childItems.length;
+    childItems.forEach((item) => {
+      count += getTotalCount(item.id);
+    });
+    return count;
+  }
+
   const allItems = topLevelItems.map((item) => {
     const renderSubItems = (parentId?: number | null, depth?: number): React.JSX.Element[] => {
       const childItems = parentId ? childItemsMap.get(parentId) : null;
@@ -59,6 +72,7 @@ export const TodoItemListItems = (props: TodoItemListItemsProps) => {
               isExpanded={isExpanded}
               hasSubItems={hasSubItems}
               paddingLeft={paddingLeft}
+              count={getTotalCount(item.id)}
             />
             {hasSubitems && isExpanded && renderSubItems(item.id, (depth || 1) + 1)}
           </>
@@ -79,6 +93,7 @@ export const TodoItemListItems = (props: TodoItemListItemsProps) => {
           handleCollapse={() => handleCollapseItem(item.id)}
           isExpanded={isExpanded}
           handleAddItemClick={() => props.handleAddItemClick(item)}
+          count={getTotalCount(item.id)}
         />
         {hasSubitems && isExpanded && renderSubItems(item.id)}
       </>
