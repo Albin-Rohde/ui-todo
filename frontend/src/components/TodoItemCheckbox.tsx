@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { SocketContext } from '../contexts/SocketContext';
 import { TodoItemContext } from '../contexts/TodoItemsContext';
 import { TodoItem } from '../types';
+import { getSubItems } from '../utils';
 
 import { FakeCursor } from './FakeCursor';
 import TypographInput from './TypographInput';
@@ -12,6 +13,7 @@ import TypographInput from './TypographInput';
 interface TodoItemCheckboxProps {
   item: TodoItem,
   fontSize: string;
+  paddingLeft?: number;
 }
 
 const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
@@ -40,17 +42,18 @@ const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
   }
 
   const handleCheckboxClick = () => {
-    setTodoItems((prevItems) =>
-      prevItems.map((item) => {
-        if (item.id === props.item.id) {
+    setTodoItems((prevItems) => {
+      const subItems = getSubItems(props.item, prevItems)
+      return prevItems.map((item) => {
+        if (item.id === props.item.id || subItems.some((subItem) => subItem.id === item.id)) {
           return {
             ...item,
-            completed: !item.completed,
+            completed: !props.item.completed,
           };
         }
         return item;
-      })
-    );
+      });
+    });
     sendItemUpdated({ ...props.item, completed: !props.item.completed })
   };
 
@@ -79,10 +82,6 @@ const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
     });
   };
 
-  const handleFocus = (event: React.ChangeEvent) => {
-    sendCursorPos(event)
-  }
-
   const handleMouseUp = (event: React.MouseEvent) => {
     sendCursorPos(event)
   }
@@ -109,10 +108,13 @@ const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
           textAlign="left"
           marginTop="0px"
           inputRef={inputRef}
-          onFocus={handleFocus}
           onMouseUp={handleMouseUp}
         />
-        <FakeCursor item={props.item} inputRef={inputRef}/>
+        <FakeCursor
+          item={props.item}
+          inputRef={inputRef}
+          paddingLeft={props.paddingLeft}
+        />
       </Box>
     </Box>
   )

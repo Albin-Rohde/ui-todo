@@ -6,6 +6,7 @@ import { TodoItemContext } from '../contexts/TodoItemsContext';
 import { TodoListContext } from '../contexts/TodoListContext';
 import { UserContext } from '../contexts/UserContext';
 import { CursorPosition, TodoItem, TodoList } from '../types';
+import { getSubItems } from '../utils';
 
 const useSocketIO = () => {
   const { socket, setSocket, isConnected, setIsConnected } = useContext(SocketContext);
@@ -46,9 +47,17 @@ const useSocketIO = () => {
 
       socket.on('todoitem.item-updated', (data: TodoItem) => {
         setTodoItems((prev: TodoItem[]) => {
+          const subItems = getSubItems(data, prev)
+
           return prev.map((item) => {
             if (item.id === data.id) {
               return data;
+            }
+            if (subItems.includes(item)) {
+              return {
+                ...item,
+                completed: data.completed,
+              }
             }
             return item;
           });
@@ -65,7 +74,7 @@ const useSocketIO = () => {
         setCursorPositions((prev) => {
           // remove old cursor position
           const filtered = prev.filter((cursorPoss) => {
-            return cursorPoss.userId !== user?.id;
+            return cursorPoss.userId !== data.userId;
           });
           // add new cursor position
           return [

@@ -9,6 +9,7 @@ import { useAuth } from '../../hooks/useAuth';
 import useHttp from '../../hooks/useHttp';
 import useSocketIO from '../../hooks/useSocketIO';
 import * as t from '../../types';
+import { TodoItem } from '../../types';
 
 import { TodoList } from './TodoList';
 
@@ -39,11 +40,7 @@ function ListView() {
     };
 
     const fetchItems = async () => {
-      const response = await sendRequest<{
-        id: number;
-        text: string;
-        completed: boolean;
-      }[]>({
+      const response = await sendRequest<TodoItem[]>({
         path: `/todo-list/${id}/todo-item`,
         method: 'GET',
       });
