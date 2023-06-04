@@ -10,6 +10,7 @@ type CreateTodoItemInput = {
   publicListId: TodoList["publicId"];
   text: TodoItem["text"];
   completed?: TodoItem["completed"];
+  parentId?: TodoItem["parentItemId"];
 }
 
 type UpdateTodoItemInput = {
@@ -18,6 +19,7 @@ type UpdateTodoItemInput = {
   publicListId: TodoList["publicId"];
   text?: TodoItem["text"];
   completed?: TodoItem["completed"];
+  parentId?: TodoItem["parentItemId"];
 }
 
 type DeleteTodoItemInput = {
@@ -91,6 +93,7 @@ export class TodoItemService {
       text: todoItem.text,
       completed: todoItem.completed,
       listId: todoItem.listId,
+      parentItemId: todoItem.parentItemId,
     };
   }
 }

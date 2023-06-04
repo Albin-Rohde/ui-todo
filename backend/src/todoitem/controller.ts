@@ -30,12 +30,13 @@ export class TodoItemController {
     @Body() data: createTodoItemInput,
     @Param("listId") listId: string
   ) {
-    const { text, completed } = await createTodoItemSchema.validate(data);
+    const { text, completed, parentId } = await createTodoItemSchema.validate(data);
     const todoList = await this.todoItemService.create({
-      user,
       publicListId: listId,
+      user,
       text,
       completed,
+      parentId,
     });
     return {
       ok: true,

@@ -55,6 +55,7 @@ describe("TodoItem EventHandlers", () => {
         id: 1,
         text: todoItem.text,
         completed: todoItem.completed,
+        parentItemId: null,
         listId: todoList.id,
       });
     });
@@ -101,6 +102,7 @@ describe("TodoItem EventHandlers", () => {
         id: todoItem.id,
         text: text,
         completed: true,
+        parentItemId: null,
         listId: todoItem.list.id,
       });
     });
