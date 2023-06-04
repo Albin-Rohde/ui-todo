@@ -34,7 +34,7 @@ export const TodoItemRow = (props: TodoItemRowProps) => {
   return (
     <ListItem
       sx={{
-        paddingLeft: '0',
+        paddingLeft: props.paddingLeft || '0px',
         width: '100%',
         backgroundColor: '#f8f8f8',
       }}
