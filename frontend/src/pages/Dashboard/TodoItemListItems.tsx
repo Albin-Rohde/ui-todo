@@ -41,7 +41,7 @@ export const TodoItemListItems = (props: TodoItemListItemsProps) => {
               item={item}
               key={item.id}
               handleAddItemClick={() => props.handleAddItemClick(item)}
-              paddingLeft={`${paddingLeft}px`}
+              paddingLeft={paddingLeft}
             />
             {renderSubItems(item.id, (depth || 1) + 1)}
           </>
@@ -55,6 +55,7 @@ export const TodoItemListItems = (props: TodoItemListItemsProps) => {
         <TodoItemRow
           item={item}
           key={item.id}
+          paddingLeft={0}
           handleAddItemClick={() => props.handleAddItemClick(item)}
         />
         {renderSubItems(item.id)}

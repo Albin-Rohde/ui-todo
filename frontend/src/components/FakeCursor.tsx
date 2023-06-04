@@ -21,6 +21,7 @@ function calculateCursorPixelOffset(cursorIndex: number, input: HTMLInputElement
 interface FakeCursorProps {
   item: TodoItem;
   inputRef: React.RefObject<HTMLInputElement>;
+  paddingLeft?: number
 }
 
 export const FakeCursor = (props: FakeCursorProps) => {
@@ -34,6 +35,10 @@ export const FakeCursor = (props: FakeCursorProps) => {
 
   const cursorLeft = calculateCursorPixelOffset(cursorPosition.cursorStart, props.inputRef.current!);
 
+  let left = cursorLeft + 41; // 41 is the padding of the input
+  if (props.paddingLeft) {
+    left += props.paddingLeft;
+  }
   if (cursorPosition.cursorStart === cursorPosition.cursorEnd) {
     return (
       <Tooltip title={`${cursorPosition.username}`} arrow open={true}>
@@ -41,7 +46,7 @@ export const FakeCursor = (props: FakeCursorProps) => {
           style={{
             position: 'absolute',
             top: 14,
-            left: cursorLeft + 41, // 41 is the padding of the input
+            left: left,
             width: '2px',
             height: '1.2em',
             backgroundColor: '#007afe',
@@ -58,7 +63,7 @@ export const FakeCursor = (props: FakeCursorProps) => {
           style={{
             position: 'absolute',
             top: 14,
-            left: cursorLeft + 41, // 41 is the padding of the input
+            left: left, // 41 is the padding of the input
             width: `${calculateCursorPixelOffset(cursorPosition.cursorEnd, props.inputRef.current!) - cursorLeft}px`,
             height: '1.2em',
             backgroundColor: 'rgba(0,157,255,0.4)',

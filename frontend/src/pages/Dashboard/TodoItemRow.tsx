@@ -13,7 +13,7 @@ import { TodoItem } from '../../types';
 interface TodoItemRowProps {
   item: TodoItem;
   handleAddItemClick: (item: TodoItem) => void;
-  paddingLeft?: string;
+  paddingLeft?: number;
 }
 
 export const TodoItemRow = (props: TodoItemRowProps) => {
@@ -34,7 +34,7 @@ export const TodoItemRow = (props: TodoItemRowProps) => {
   return (
     <ListItem
       sx={{
-        paddingLeft: props.paddingLeft || '0px',
+        paddingLeft: `${props.paddingLeft}px` || '0px',
         width: '100%',
         backgroundColor: '#f8f8f8',
       }}
@@ -42,6 +42,7 @@ export const TodoItemRow = (props: TodoItemRowProps) => {
     >
       <TodoItemCheckbox
         item={props.item}
+        paddingLeft={props.paddingLeft || 0}
         fontSize="1rem"
       />
       <ListItemIcon

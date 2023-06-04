@@ -12,6 +12,7 @@ import TypographInput from './TypographInput';
 interface TodoItemCheckboxProps {
   item: TodoItem,
   fontSize: string;
+  paddingLeft?: number;
 }
 
 const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
@@ -107,7 +108,11 @@ const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
           inputRef={inputRef}
           onMouseUp={handleMouseUp}
         />
-        <FakeCursor item={props.item} inputRef={inputRef}/>
+        <FakeCursor
+          item={props.item}
+          inputRef={inputRef}
+          paddingLeft={props.paddingLeft}
+        />
       </Box>
     </Box>
   )
