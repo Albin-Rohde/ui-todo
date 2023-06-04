@@ -6,10 +6,18 @@ import { createExpressServer } from "routing-controllers";
 import session from "express-session";
 import cors from "cors";
 import bodyParser from "body-parser";
-import express, { Application, Request, RequestHandler, Response } from "express";
+import express, {
+  Application,
+  Request,
+  RequestHandler,
+  Response,
+  Router,
+  static as express_static
+} from "express";
 import { getRedisStore } from "./redisStore";
 import { TodoListController } from "./todolist/controller";
 import { TodoItemController } from "./todoitem/controller";
+import path from "path";
 
 dotenv.config();
 
@@ -17,10 +25,14 @@ export const getExpressApp = async (session: RequestHandler): Promise<Applicatio
   try {
     await db.initialize();
     const app = express();
-    app.use(cors({
-      origin: "http://localhost:3000",
-      credentials: true
-    }));
+
+    if (process.env.NODE_ENV !== "production") {
+      // Allow CORS for development
+      app.use(cors({
+        origin: "http://localhost:3000",
+        credentials: true
+      }));
+    }
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
     app.set("trust proxy", true);
@@ -32,6 +44,19 @@ export const getExpressApp = async (session: RequestHandler): Promise<Applicatio
     });
 
     app.use("/api", server);
+
+    // Serve react app if in production
+    if (process.env.NODE_ENV === "production") {
+      const reactRouter = Router();
+      const staticPath = path.join(__dirname, "..", "..", "frontend", "build")
+      const reactStatic = express_static(staticPath)
+      const reactPaths = ["/", "/list/:id", "/signin", "/signup"]
+      reactPaths.forEach((path) => {
+        reactRouter.use(path, reactStatic)
+      })
+      app.use("/", reactRouter);
+    }
+
     return app;
   } catch (err) {
     console.error(err);
