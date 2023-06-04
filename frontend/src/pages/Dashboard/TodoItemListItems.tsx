@@ -11,6 +11,16 @@ interface TodoItemListItemsProps {
 }
 
 export const TodoItemListItems = (props: TodoItemListItemsProps) => {
+  const [expandedItems, setExpandedItems] = React.useState<number[]>([]);
+
+  const handleExpand = (itemId: number) => {
+    if (expandedItems.includes(itemId)) {
+      setExpandedItems((prev) => prev.filter((id) => id !== itemId));
+    } else {
+      setExpandedItems((prev) => [...prev, itemId]);
+    }
+  }
+
   const topLevelItems: TodoItem[] = [];
   const childItemsMap = new Map<number, TodoItem[]>();
   props.todoItems.forEach((item) => {
@@ -25,6 +35,19 @@ export const TodoItemListItems = (props: TodoItemListItemsProps) => {
     }
   });
 
+  const getTotalCount = (parentId?: number | null): number => {
+    const childItems = parentId ? childItemsMap.get(parentId) : null;
+    if (!childItems) {
+      return 0;
+    }
+
+    let count = childItems.length;
+    childItems.forEach((item) => {
+      count += getTotalCount(item.id);
+    });
+    return count;
+  }
+
   const allItems = topLevelItems.map((item) => {
     const renderSubItems = (parentId?: number | null, depth?: number): React.JSX.Element[] => {
       const childItems = parentId ? childItemsMap.get(parentId) : null;
@@ -34,6 +57,9 @@ export const TodoItemListItems = (props: TodoItemListItemsProps) => {
 
       const paddingLeft = 25 * (depth || 1);
       return childItems.map((item) => {
+        const hasSubItems = childItemsMap.has(item.id);
+        const isExpanded = expandedItems.includes(item.id);
+
         return (
           <>
             <Divider/>
@@ -41,14 +67,20 @@ export const TodoItemListItems = (props: TodoItemListItemsProps) => {
               item={item}
               key={item.id}
               handleAddItemClick={() => props.handleAddItemClick(item)}
+              handleCollapse={() => handleExpand(item.id)}
+              isExpanded={isExpanded}
+              hasSubItems={hasSubItems}
               paddingLeft={paddingLeft}
+              count={getTotalCount(item.id)}
             />
-            {renderSubItems(item.id, (depth || 1) + 1)}
+            {hasSubitems && isExpanded && renderSubItems(item.id, (depth || 1) + 1)}
           </>
         );
       })
     }
 
+    const hasSubitems = childItemsMap.has(item.id);
+    const isExpanded = expandedItems.includes(item.id);
     return (
       <>
         <Divider/>
@@ -56,9 +88,13 @@ export const TodoItemListItems = (props: TodoItemListItemsProps) => {
           item={item}
           key={item.id}
           paddingLeft={0}
+          hasSubItems={hasSubitems}
+          handleCollapse={() => handleExpand(item.id)}
+          isExpanded={isExpanded}
           handleAddItemClick={() => props.handleAddItemClick(item)}
+          count={getTotalCount(item.id)}
         />
-        {renderSubItems(item.id)}
+        {hasSubitems && isExpanded && renderSubItems(item.id)}
       </>
     )
   });
