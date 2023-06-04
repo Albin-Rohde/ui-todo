@@ -97,6 +97,39 @@ describe("TodoItemService", () => {
       expect(subItem?.parentItemId).toEqual(parentItem.id);
       expect(subItem?.text).toEqual(text);
     });
+
+    it("Should not create a todoitem if user does not own list and list is private", async () => {
+      const user = await new UserFactory().create();
+      const user2 = await new UserFactory().create();
+      const todoList = await new TodoListFactory().create({ user: user2, private: true });
+
+      await expect(
+        todoItemService.create({
+          user,
+          publicListId: todoList.publicId,
+          text: faker.lorem.text(),
+          completed: false,
+        })
+      ).rejects.toThrowError(EntityNotFoundError);
+    });
+
+    it("Shouuld not create a todoitem if user does not own list and list is readonly", async () => {
+      const user = await new UserFactory().create();
+      const user2 = await new UserFactory().create();
+      const todoList = await new TodoListFactory().create({
+        user: user2,
+        readonly: true
+      });
+
+      await expect(
+        todoItemService.create({
+          user,
+          publicListId: todoList.publicId,
+          text: faker.lorem.text(),
+          completed: false,
+        })
+      ).rejects.toThrowError(Error);
+    });
   });
 
   describe("update", () => {
@@ -151,6 +184,26 @@ describe("TodoItemService", () => {
       expect(item?.id).toEqual(todoItem.id);
       expect(item?.completed).toEqual(true);
     });
+
+    it("Should not update todoitem if user does not own list and list is readonly", async () => {
+      const user = await new UserFactory().create();
+      const user2 = await new UserFactory().create();
+      const todoList = await new TodoListFactory().create({
+        user: user2,
+        readonly: true
+      });
+      const todoItem = await new TodoItemFactory().create({ list: todoList });
+
+      await expect(
+        todoItemService.update({
+          user,
+          id: todoItem.id,
+          publicListId: todoList.publicId,
+          text: faker.lorem.text(),
+          completed: false,
+        })
+      ).rejects.toThrowError(Error);
+    });
   });
 
   describe("delete", () => {
@@ -172,17 +225,20 @@ describe("TodoItemService", () => {
       expect(count).toEqual(0);
     });
 
-    it("should not delete a todoitem if user does not own list", async () => {
+    it("should not delete a todoitem if user does not own list and list is readonly", async () => {
       const user = await new UserFactory().create();
       const user2 = await new UserFactory().create();
-      const todoList = await new TodoListFactory().create({ user: user2 });
+      const todoList = await new TodoListFactory().create({
+        user: user2,
+        readonly: true
+      });
       const todoItem = await new TodoItemFactory().create({ list: todoList });
 
-      await todoItemService.delete({
+      await expect(todoItemService.delete({
         user,
         id: todoItem.id,
         publicListId: todoList.publicId,
-      });
+      })).rejects.toThrowError(Error);
 
       const count = await db.createQueryBuilder()
         .select("todo_item")
