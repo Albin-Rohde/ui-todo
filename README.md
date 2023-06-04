@@ -22,7 +22,7 @@ and showcase your capabilities in the time you have available.
   groups of tasks and see their overall progress
 - [ ] I as a user can specify cost/price for a task or a subtask - so that I can track
   my expenses / project cost
-- [ ] I as a user can see the sum of the subtasks aggregated in the parent task - so
+- [x] I as a user can see the sum of the subtasks aggregated in the parent task - so
   that in my shopping list I can see what contributes to the overall sum. For example I
   can have a task “Salad”, where I'd add all ingredients as sub-tasks, and would see how
   much does salad cost on my shopping list
