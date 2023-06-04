@@ -44,6 +44,18 @@ export class TodoItemService {
     item.text = input.text;
     item.completed = input.completed || false;
     item.list = list;
+    if (input.parentId) {
+      const parentExist = await this.todoItemRepository.exist({
+        where: {
+          id: input.parentId,
+          listId: list.id
+        }
+      });
+      if (!parentExist) {
+        throw new EntityNotFoundError(TodoItem, "Parent item not found");
+      }
+      item.parentItemId = input.parentId;
+    }
     return this.todoItemRepository.save(item);
   }
 
@@ -58,6 +70,18 @@ export class TodoItemService {
     }
     if (input.completed !== undefined) {
       item.completed = input.completed;
+    }
+    if (input.parentId) {
+      const parentExist = await this.todoItemRepository.exist({
+        where: {
+          id: input.parentId,
+          listId: list.id
+        }
+      });
+      if (!parentExist) {
+        throw new EntityNotFoundError(TodoItem, "Parent item not found");
+      }
+      item.parentItemId = input.parentId;
     }
     return this.todoItemRepository.save(item);
   }
