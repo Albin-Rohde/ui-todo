@@ -20,6 +20,25 @@ services:
     ports:
       - 6379:6379
 
+  app:
+    container_name: ui-todo.app
+    build: .
+    networks:
+      - local
+    ports:
+      - 4000:4000
+    environment:
+      - PORT=4000
+      - POSTGRES_HOST=ui-todo.db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=db
+      - REDIS_URL=redis://ui-todo.redis:6379
+    depends_on:
+      - db
+      - redis
+
 networks:
   local:
     driver: bridge

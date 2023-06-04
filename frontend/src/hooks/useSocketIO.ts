@@ -4,15 +4,15 @@ import { io } from 'socket.io-client';
 import { SocketContext } from '../contexts/SocketContext';
 import { TodoItemContext } from '../contexts/TodoItemsContext';
 import { TodoListContext } from '../contexts/TodoListContext';
-import { UserContext } from '../contexts/UserContext';
 import { CursorPosition, TodoItem, TodoList } from '../types';
 import { getSubItems } from '../utils';
+
 
 const useSocketIO = () => {
   const { socket, setSocket, isConnected, setIsConnected } = useContext(SocketContext);
   const { todoList, setTodolist } = useContext(TodoListContext)
-  const { todoItems, setTodoItems, setCursorPositions } = useContext(TodoItemContext);
-  const { user } = useContext(UserContext);
+  const { setTodoItems, setCursorPositions } = useContext(TodoItemContext);
+  const baseUrl = process.env.REACT_APP_BACKEND_URL || '';
 
   useEffect(() => {
     if (socket) {
@@ -20,7 +20,7 @@ const useSocketIO = () => {
         setIsConnected(false);
       });
     } else {
-      const newSocket = io('http://localhost:5000', {
+      const newSocket = io(baseUrl, {
         withCredentials: true,
         transports: ['websocket'],
         autoConnect: false,
