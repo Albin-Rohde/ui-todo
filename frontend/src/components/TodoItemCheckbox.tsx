@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { SocketContext } from '../contexts/SocketContext';
 import { TodoItemContext } from '../contexts/TodoItemsContext';
 import { TodoItem } from '../types';
+import { getSubItems } from '../utils';
 
 import { FakeCursor } from './FakeCursor';
 import TypographInput from './TypographInput';
@@ -41,17 +42,18 @@ const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
   }
 
   const handleCheckboxClick = () => {
-    setTodoItems((prevItems) =>
-      prevItems.map((item) => {
-        if (item.id === props.item.id) {
+    setTodoItems((prevItems) => {
+      const subItems = getSubItems(props.item, prevItems)
+      return prevItems.map((item) => {
+        if (item.id === props.item.id || subItems.some((subItem) => subItem.id === item.id)) {
           return {
             ...item,
-            completed: !item.completed,
+            completed: !props.item.completed,
           };
         }
         return item;
-      })
-    );
+      });
+    });
     sendItemUpdated({ ...props.item, completed: !props.item.completed })
   };
 

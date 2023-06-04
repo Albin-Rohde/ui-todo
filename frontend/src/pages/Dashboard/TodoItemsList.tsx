@@ -70,8 +70,10 @@ const TodoItemsList = () => {
             label="Show completed"
           />
         </ListItem>
-        <TodoItemListItems todoItems={filteredItems}
-                           handleAddItemClick={handleAddItemClick}/>
+        <TodoItemListItems
+          todoItems={filteredItems}
+          handleAddItemClick={handleAddItemClick}
+        />
         <Divider/>
       </List>
     </Box>
