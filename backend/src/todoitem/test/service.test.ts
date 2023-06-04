@@ -69,6 +69,34 @@ describe("TodoItemService", () => {
         .getCount();
       expect(count).toEqual(1);
     });
+
+    it("should create a todoitem linked to parent item", async () => {
+      const user = await new UserFactory().create();
+      const todoList = await new TodoListFactory().create({ user });
+      const parentItem = await new TodoItemFactory().create({ list: todoList });
+
+      const text = faker.lorem.text();
+      const todoItem = await todoItemService.create({
+        user,
+        publicListId: todoList.publicId,
+        text: text,
+        completed: false,
+        parentId: parentItem.id,
+      });
+      expect(todoItem).toBeDefined();
+      expect(todoItem.id).toBeDefined();
+      expect(todoItem.list.id).toEqual(todoList.id);
+      expect(todoItem.parentItemId).toEqual(parentItem.id);
+
+      const subItem = await db.createQueryBuilder()
+        .select("todo_item")
+        .from("todo_item", "todo_item")
+        .where("todo_item.id = :id", { id: todoItem.id })
+        .getOne();
+      expect(subItem?.id).toEqual(todoItem.id);
+      expect(subItem?.parentItemId).toEqual(parentItem.id);
+      expect(subItem?.text).toEqual(text);
+    });
   });
 
   describe("update", () => {
