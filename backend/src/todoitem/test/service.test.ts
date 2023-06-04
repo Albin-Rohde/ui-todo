@@ -123,6 +123,34 @@ describe("TodoItemService", () => {
       expect(item?.text).toEqual(newText);
       expect(item?.completed).toEqual(true);
     });
+
+    it("Update complete status should update all subitems", async () => {
+      const user = await new UserFactory().create();
+      const todoList = await new TodoListFactory().create({ user });
+      const parentItem = await new TodoItemFactory().create({ list: todoList });
+      const todoItem = await new TodoItemFactory().create({
+        list: todoList,
+        parentItemId: parentItem.id
+      });
+
+      const newText = faker.lorem.text();
+      await todoItemService.update({
+        user,
+        id: parentItem.id,
+        publicListId: todoList.publicId,
+        text: newText,
+        completed: true,
+      });
+
+      const item = await db.createQueryBuilder()
+        .select("todo_item")
+        .from("todo_item", "todo_item")
+        .where("todo_item.id = :id", { id: todoItem.id })
+        .getOne();
+      expect(item).toBeDefined();
+      expect(item?.id).toEqual(todoItem.id);
+      expect(item?.completed).toEqual(true);
+    });
   });
 
   describe("delete", () => {

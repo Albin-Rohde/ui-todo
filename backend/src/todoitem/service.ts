@@ -70,6 +70,12 @@ export class TodoItemService {
     }
     if (input.completed !== undefined) {
       item.completed = input.completed;
+      // Update the complete status of all sub items
+      const subItems = await this.recursiveGetChildren(item);
+      await Promise.all(subItems.map(async (subItem) => {
+        subItem.completed = input.completed!;
+        return await this.todoItemRepository.save(subItem);
+      }));
     }
     if (input.parentId) {
       const parentExist = await this.todoItemRepository.exist({
