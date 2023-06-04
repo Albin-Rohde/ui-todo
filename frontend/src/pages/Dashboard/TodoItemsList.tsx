@@ -9,9 +9,9 @@ import { TodoItemContext } from '../../contexts/TodoItemsContext';
 import useHttp from '../../hooks/useHttp';
 import { TodoItem } from '../../types';
 
-import { TodoItemRow } from './TodoItemRow';
+import { TodoItemListItems } from './TodoItemListItems';
 
-const TodoItems = () => {
+const TodoItemsList = () => {
   const { todoItems, setTodoItems } = useContext(TodoItemContext);
   const { sendRequest } = useHttp();
   const { id } = useParams<{ id: string }>();
@@ -23,7 +23,7 @@ const TodoItems = () => {
       path: `/todo-list/${id}/todo-item`,
       method: 'POST',
       body: {
-        parentId: item?.parentItemId,
+        parentId: item?.id,
       }
     });
 
@@ -34,19 +34,12 @@ const TodoItems = () => {
     setTodoItems([...todoItems, response.data]);
   };
 
-  const todoItemsList = todoItems?.filter((item) => {
+  const filteredItems = todoItems?.filter((item) => {
     if (showCompleted) {
       return true;
     }
     return !item.completed;
-  })?.map((item) => {
-    return (
-      <>
-        <Divider/>
-        <TodoItemRow item={item} key={item.id} handleAddItemClick={handleAddItemClick}/>
-      </>
-    );
-  });
+  })
 
   return (
     <Box sx={{ display: 'flex', textAlign: 'left', width: '100%' }}>
@@ -77,11 +70,12 @@ const TodoItems = () => {
             label="Show completed"
           />
         </ListItem>
-        {todoItemsList}
+        <TodoItemListItems todoItems={filteredItems}
+                           handleAddItemClick={handleAddItemClick}/>
         <Divider/>
       </List>
     </Box>
   );
 };
 
-export default TodoItems;
+export default TodoItemsList;

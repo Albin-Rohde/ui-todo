@@ -7,7 +7,7 @@ import { TodoListContext } from '../../contexts/TodoListContext';
 import { TodoListsContext, } from '../../contexts/TodoListsContext';
 import useHttp from '../../hooks/useHttp';
 
-import TodoItems from './TodoItems';
+import TodoItemsList from './TodoItemsList';
 
 interface TodoListProps {
   loading: boolean;
@@ -80,7 +80,7 @@ export const TodoList = (props: TodoListProps) => {
           width: '100%',
           textAlign: 'left'
         }}>
-          <TodoItems/>
+          <TodoItemsList/>
         </Box>
       </ListNameContainer>
     </>
