@@ -95,6 +95,8 @@ export class TodoItemService {
         listId: list.id
       }
     });
+    const children = await this.recursiveGetChildren(item);
+    await this.todoItemRepository.remove(children);
     return this.todoItemRepository.remove(item);
   }
 
@@ -109,6 +111,20 @@ export class TodoItemService {
   // TODO: This should also check that the user has access to the list that the item is in
   public async getById(user: User, id: number) {
     return await this.todoItemRepository.findOneOrFail({ where: { id } });
+  }
+
+  private async recursiveGetChildren(item: TodoItem): Promise<TodoItem[]> {
+    // TODO: this is not very efficient since we'll do a roundtrip to the database for each level of children
+    const children = await this.todoItemRepository.find({
+      where: {
+        parentItemId: item.id
+      }
+    });
+    const childrenWithChildren = await Promise.all(children.map(async child => {
+      const children = await this.recursiveGetChildren(child);
+      return [child, ...children];
+    }));
+    return childrenWithChildren.flat();
   }
 
   public responseFormat(todoItem: TodoItem) {

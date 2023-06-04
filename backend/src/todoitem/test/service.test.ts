@@ -124,4 +124,114 @@ describe("TodoItemService", () => {
       expect(item?.completed).toEqual(true);
     });
   });
+
+  describe("delete", () => {
+    it("should delete a todoitem", async () => {
+      const user = await new UserFactory().create();
+      const todoList = await new TodoListFactory().create({ user });
+      const todoItem = await new TodoItemFactory().create({ list: todoList });
+
+      await todoItemService.delete({
+        user,
+        id: todoItem.id,
+        publicListId: todoList.publicId,
+      });
+
+      const count = await db.createQueryBuilder()
+        .select("todo_item")
+        .from("todo_item", "todo_item")
+        .getCount();
+      expect(count).toEqual(0);
+    });
+
+    it("should not delete a todoitem if user does not own list", async () => {
+      const user = await new UserFactory().create();
+      const user2 = await new UserFactory().create();
+      const todoList = await new TodoListFactory().create({ user: user2 });
+      const todoItem = await new TodoItemFactory().create({ list: todoList });
+
+      await todoItemService.delete({
+        user,
+        id: todoItem.id,
+        publicListId: todoList.publicId,
+      });
+
+      const count = await db.createQueryBuilder()
+        .select("todo_item")
+        .from("todo_item", "todo_item")
+        .getCount();
+      expect(count).toEqual(1);
+    });
+
+
+    it("should not delete a todoitem if todoitem does not belong to list", async () => {
+      const user = await new UserFactory().create();
+      const todoList = await new TodoListFactory().create({ user });
+      const todoItem = await new TodoItemFactory().create();
+
+      await expect(
+        todoItemService.delete({
+          user,
+          id: todoItem.id,
+          publicListId: todoList.publicId,
+        })
+      ).rejects.toThrowError(EntityNotFoundError);
+    });
+
+    it("should delete subitem of a todoitem", async () => {
+      const user = await new UserFactory().create();
+      const todoList = await new TodoListFactory().create({ user });
+      const todoItem = await new TodoItemFactory().create({ list: todoList });
+      const subItem = await new TodoItemFactory().create({
+        list: todoList,
+        parentItemId: todoItem.id
+      });
+
+      await todoItemService.delete({
+        user,
+        id: todoItem.id,
+        publicListId: todoList.publicId,
+      });
+
+      const count = await db.createQueryBuilder()
+        .select("todo_item")
+        .from("todo_item", "todo_item")
+        .getCount();
+      expect(count).toEqual(0);
+    });
+
+    it("should delete 'infinite' levels of subitem of a todoitem", async () => {
+      const user = await new UserFactory().create();
+      const todoList = await new TodoListFactory().create({ user });
+      const todoItem = await new TodoItemFactory().create({ list: todoList });
+      const subItem = await new TodoItemFactory().create({
+        list: todoList,
+        parentItemId: todoItem.id
+      });
+      const subitem2 = await new TodoItemFactory().create({
+        list: todoList,
+        parentItemId: subItem.id
+      });
+      const subitem3 = await new TodoItemFactory().create({
+        list: todoList,
+        parentItemId: subitem2.id
+      });
+      const subitem4 = await new TodoItemFactory().create({
+        list: todoList,
+        parentItemId: subitem3.id
+      });
+
+      await todoItemService.delete({
+        user,
+        id: todoItem.id,
+        publicListId: todoList.publicId,
+      });
+
+      const count = await db.createQueryBuilder()
+        .select("todo_item")
+        .from("todo_item", "todo_item")
+        .getCount();
+      expect(count).toEqual(0);
+    });
+  });
 });
