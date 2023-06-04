@@ -11,18 +11,56 @@ interface TodoItemListItemsProps {
 }
 
 export const TodoItemListItems = (props: TodoItemListItemsProps) => {
-  const listItems = props.todoItems.map((item) => {
+  const topLevelItems: TodoItem[] = [];
+  const childItemsMap = new Map<number, TodoItem[]>();
+  props.todoItems.forEach((item) => {
+    if (item.parentItemId === null) {
+      topLevelItems.push(item);
+      return;
+    }
+    if (childItemsMap.has(item.parentItemId)) {
+      childItemsMap.get(item.parentItemId)?.push(item);
+    } else {
+      childItemsMap.set(item.parentItemId, [item]);
+    }
+  });
+
+  const allItems = topLevelItems.map((item) => {
+    const renderSubItems = (parentId?: number | null, depth?: number): React.JSX.Element[] => {
+      const childItems = parentId ? childItemsMap.get(parentId) : null;
+      if (!childItems) {
+        return [];
+      }
+
+      const paddingLeft = 25 * (depth || 1);
+      return childItems.map((item) => {
+        return (
+          <>
+            <Divider/>
+            <TodoItemRow
+              item={item}
+              key={item.id}
+              handleAddItemClick={() => props.handleAddItemClick(item)}
+              paddingLeft={`${paddingLeft}px`}
+            />
+            {renderSubItems(item.id, (depth || 1) + 1)}
+          </>
+        );
+      })
+    }
+
     return (
       <>
         <Divider/>
         <TodoItemRow
           item={item}
           key={item.id}
-          handleAddItemClick={props.handleAddItemClick}
+          handleAddItemClick={() => props.handleAddItemClick(item)}
         />
+        {renderSubItems(item.id)}
       </>
-    );
+    )
   });
 
-  return <>{listItems}</>;
+  return <>{allItems}</>;
 }
