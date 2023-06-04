@@ -11,14 +11,13 @@ interface TodoItemListItemsProps {
 }
 
 export const TodoItemListItems = (props: TodoItemListItemsProps) => {
-  const [collapsedItems, setCollapsedItems] = React.useState<number[]>([]);
+  const [expandedItems, setExpandedItems] = React.useState<number[]>([]);
 
-  const handleCollapseItem = (itemId: number) => {
-    console.log('handle colapse ran for item', itemId)
-    if (collapsedItems.includes(itemId)) {
-      setCollapsedItems((prev) => prev.filter((id) => id !== itemId));
+  const handleExpand = (itemId: number) => {
+    if (expandedItems.includes(itemId)) {
+      setExpandedItems((prev) => prev.filter((id) => id !== itemId));
     } else {
-      setCollapsedItems((prev) => [...prev, itemId]);
+      setExpandedItems((prev) => [...prev, itemId]);
     }
   }
 
@@ -59,7 +58,7 @@ export const TodoItemListItems = (props: TodoItemListItemsProps) => {
       const paddingLeft = 25 * (depth || 1);
       return childItems.map((item) => {
         const hasSubItems = childItemsMap.has(item.id);
-        const isExpanded = !collapsedItems.includes(item.id);
+        const isExpanded = expandedItems.includes(item.id);
 
         return (
           <>
@@ -68,7 +67,7 @@ export const TodoItemListItems = (props: TodoItemListItemsProps) => {
               item={item}
               key={item.id}
               handleAddItemClick={() => props.handleAddItemClick(item)}
-              handleCollapse={() => handleCollapseItem(item.id)}
+              handleCollapse={() => handleExpand(item.id)}
               isExpanded={isExpanded}
               hasSubItems={hasSubItems}
               paddingLeft={paddingLeft}
@@ -81,7 +80,7 @@ export const TodoItemListItems = (props: TodoItemListItemsProps) => {
     }
 
     const hasSubitems = childItemsMap.has(item.id);
-    const isExpanded = !collapsedItems.includes(item.id);
+    const isExpanded = expandedItems.includes(item.id);
     return (
       <>
         <Divider/>
@@ -90,7 +89,7 @@ export const TodoItemListItems = (props: TodoItemListItemsProps) => {
           key={item.id}
           paddingLeft={0}
           hasSubItems={hasSubitems}
-          handleCollapse={() => handleCollapseItem(item.id)}
+          handleCollapse={() => handleExpand(item.id)}
           isExpanded={isExpanded}
           handleAddItemClick={() => props.handleAddItemClick(item)}
           count={getTotalCount(item.id)}
