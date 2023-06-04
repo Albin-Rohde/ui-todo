@@ -1,3 +1,5 @@
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import RemoveCircleOutlineOutlinedIcon
   from '@mui/icons-material/RemoveCircleOutlineOutlined';
@@ -13,7 +15,10 @@ import { TodoItem } from '../../types';
 interface TodoItemRowProps {
   item: TodoItem;
   handleAddItemClick: (item: TodoItem) => void;
-  paddingLeft?: number;
+  paddingLeft: number;
+  hasSubItems: boolean;
+  isExpanded: boolean;
+  handleCollapse: () => void;
 }
 
 export const TodoItemRow = (props: TodoItemRowProps) => {
@@ -31,6 +36,14 @@ export const TodoItemRow = (props: TodoItemRowProps) => {
     });
   }
 
+  const getChevron = () => {
+    if (props.isExpanded) {
+      return <ExpandMoreIcon sx={{ fontSize: '1.5rem' }}/>;
+    } else {
+      return <ChevronRightIcon sx={{ fontSize: '1.5rem' }}/>;
+    }
+  }
+
   return (
     <ListItem
       sx={{
@@ -45,6 +58,19 @@ export const TodoItemRow = (props: TodoItemRowProps) => {
         paddingLeft={props.paddingLeft || 0}
         fontSize="1rem"
       />
+      {props.hasSubItems && (
+        <ListItemIcon
+          sx={{ margin: 0, padding: 0, minWidth: '24px' }}>
+          <Tooltip title={props.isExpanded ? 'Collapse sub-items' : 'Expand sub-items'}>
+            <IconButton
+              sx={{ padding: 0 }}
+              onClick={() => props.handleCollapse()}
+            >
+              {getChevron()}
+            </IconButton>
+          </Tooltip>
+        </ListItemIcon>
+      )}
       <ListItemIcon
         sx={{ margin: 0, padding: 0, paddingRight: '4px', minWidth: '24px' }}>
         <Tooltip title={'Add sub-item'}>

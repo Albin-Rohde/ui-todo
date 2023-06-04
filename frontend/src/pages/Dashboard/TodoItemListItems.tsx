@@ -11,6 +11,17 @@ interface TodoItemListItemsProps {
 }
 
 export const TodoItemListItems = (props: TodoItemListItemsProps) => {
+  const [collapsedItems, setCollapsedItems] = React.useState<number[]>([]);
+
+  const handleCollapseItem = (itemId: number) => {
+    console.log('handle colapse ran for item', itemId)
+    if (collapsedItems.includes(itemId)) {
+      setCollapsedItems((prev) => prev.filter((id) => id !== itemId));
+    } else {
+      setCollapsedItems((prev) => [...prev, itemId]);
+    }
+  }
+
   const topLevelItems: TodoItem[] = [];
   const childItemsMap = new Map<number, TodoItem[]>();
   props.todoItems.forEach((item) => {
@@ -34,6 +45,9 @@ export const TodoItemListItems = (props: TodoItemListItemsProps) => {
 
       const paddingLeft = 25 * (depth || 1);
       return childItems.map((item) => {
+        const hasSubItems = childItemsMap.has(item.id);
+        const isExpanded = !collapsedItems.includes(item.id);
+
         return (
           <>
             <Divider/>
@@ -41,14 +55,19 @@ export const TodoItemListItems = (props: TodoItemListItemsProps) => {
               item={item}
               key={item.id}
               handleAddItemClick={() => props.handleAddItemClick(item)}
+              handleCollapse={() => handleCollapseItem(item.id)}
+              isExpanded={isExpanded}
+              hasSubItems={hasSubItems}
               paddingLeft={paddingLeft}
             />
-            {renderSubItems(item.id, (depth || 1) + 1)}
+            {hasSubitems && isExpanded && renderSubItems(item.id, (depth || 1) + 1)}
           </>
         );
       })
     }
 
+    const hasSubitems = childItemsMap.has(item.id);
+    const isExpanded = !collapsedItems.includes(item.id);
     return (
       <>
         <Divider/>
@@ -56,9 +75,12 @@ export const TodoItemListItems = (props: TodoItemListItemsProps) => {
           item={item}
           key={item.id}
           paddingLeft={0}
+          hasSubItems={hasSubitems}
+          handleCollapse={() => handleCollapseItem(item.id)}
+          isExpanded={isExpanded}
           handleAddItemClick={() => props.handleAddItemClick(item)}
         />
-        {renderSubItems(item.id)}
+        {hasSubitems && isExpanded && renderSubItems(item.id)}
       </>
     )
   });
