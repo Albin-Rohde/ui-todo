@@ -65,7 +65,7 @@ const useSocketIO = () => {
         setCursorPositions((prev) => {
           // remove old cursor position
           const filtered = prev.filter((cursorPoss) => {
-            return cursorPoss.userId !== user?.id;
+            return cursorPoss.userId !== data.userId;
           });
           // add new cursor position
           return [

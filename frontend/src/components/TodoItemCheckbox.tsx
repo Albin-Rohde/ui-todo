@@ -79,10 +79,6 @@ const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
     });
   };
 
-  const handleFocus = (event: React.ChangeEvent) => {
-    sendCursorPos(event)
-  }
-
   const handleMouseUp = (event: React.MouseEvent) => {
     sendCursorPos(event)
   }
@@ -109,7 +105,6 @@ const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
           textAlign="left"
           marginTop="0px"
           inputRef={inputRef}
-          onFocus={handleFocus}
           onMouseUp={handleMouseUp}
         />
         <FakeCursor item={props.item} inputRef={inputRef}/>
