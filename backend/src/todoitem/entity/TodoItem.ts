@@ -21,4 +21,7 @@ export class TodoItem {
 
   @Column({ name: "todo_list_id" })
   listId!: number;
+
+  @Column({ name: "parent_item_id", nullable: true, type: "int" })
+  parentItemId!: number | null;
 }
