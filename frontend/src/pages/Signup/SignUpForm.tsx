@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/system';
 import React, { MouseEvent, useContext, useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 import InforMessageBox from '../../components/InforMessageBox';
 import PrimaryButton from '../../components/PrimaryButton';
@@ -44,6 +44,7 @@ function SignUpForm() {
     confirmPassword: '',
   });
   const { setUser } = useContext(UserContext);
+  const navigate = useNavigate();
 
   const checkFormForError = (): { ok: boolean, errors: FormFieldError } => {
     let ok = true;
@@ -96,6 +97,7 @@ function SignUpForm() {
     }
     if (responseData.ok && responseData.data) {
       setUser(responseData.data);
+      navigate('/');
     }
   }
 
