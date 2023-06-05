@@ -27,7 +27,7 @@ const LogoutButtonWrapper = styled(Box)(({ theme }) => ({
   marginLeft: 'auto',
 }));
 
-const UserProfile = () => {
+const UserProfile = ({ isMobile }: { isMobile: boolean }) => {
   const { user, setUser } = useContext(UserContext);
   const { sendRequest } = useHttp();
   const navigate = useNavigate();
@@ -43,7 +43,9 @@ const UserProfile = () => {
     }
   }
   return (
-    <UserProfileContainer>
+    <UserProfileContainer sx={{
+      width: isMobile ? '85%' : '250px',
+    }}>
       <Box display="flex" alignItems="center" gap={1}>
         <SmallAvatar src="/path-to-avatar.png" alt="User Avatar"/>
         <Typography variant="body1">{user?.username}</Typography>

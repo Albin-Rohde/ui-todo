@@ -4,8 +4,9 @@ import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
 
 
-function NotFoundState() {
+function NotFoundState({ isMobile }: { isMobile: boolean }) {
   const { loading } = useAuth({ redirectTo: '/signin' });
+
   if (loading) {
     return <></>;
   }
@@ -14,7 +15,7 @@ function NotFoundState() {
     <Box sx={{
       backgroundColor: '#eaeaea',
       flex: '1 1 auto',
-      height: '100vh',
+      minHeight: isMobile ? 'calc(100dvh - 65px)' : 'inherit',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center'
