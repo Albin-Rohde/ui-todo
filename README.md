@@ -1,15 +1,8 @@
-# ui-todo
+# ui-todo ![test-backend](https://github.com/albin-rohde/ui-todo/actions/workflows/test-backend.yml/badge.svg) ![lint-backend](https://github.com/albin-rohde/ui-todo/actions/workflows/lint-backend.yml/badge.svg) ![lint-frontend](https://github.com/albin-rohde/ui-todo/actions/workflows/lint-frontend.yml/badge.svg)
 
-## Project requirements
-Technical Requirements
-- Language: TypeScript
-- Framework: React
-- Backend: Node
+## Stories completed
 
-User Stories to Consider/Implement
-It's not mandatory to implement all of the given user stories - use your own judgement to deliver
-the best user experience and a combination of user stories that - in your opinion - make sense
-and showcase your capabilities in the time you have available.
+Stories with a checkmark is completed.
 
 - [x] ⚠ (required): I as a user can create to-do items, such as a grocery list
 - [x] ⚠ (required): I as another user can collaborate in real-time with user - so that
@@ -38,10 +31,10 @@ and showcase your capabilities in the time you have available.
   groceries and work related tasks
 - [ ] In addition to regular to-do tasks, I as a user can add “special” typed to-do
   items, that will have custom style and some required fields:
-	- [ ] ”work-task”, which has a required field “deadline” - which is a date
-	- [ ] “food” that has fields:
-		- [ ] required: “carbohydrate”, “fat”, “protein” (each specified in g/100g)
-		- [ ] optional: “picture” an URL to an image used to render this item
+  - [ ] ”work-task”, which has a required field “deadline” - which is a date
+  - [ ] “food” that has fields:
+    - [ ] required: “carbohydrate”, “fat”, “protein” (each specified in g/100g)
+    - [ ] optional: “picture” an URL to an image used to render this item
 - [ ] I as a user can keep editing the list even when I lose internet connection, and
   can expect it to sync up with BE as I regain connection
 - [ ] I as a user can use my VR goggles to edit/browse multiple to-do lists in parallel
@@ -57,10 +50,109 @@ and showcase your capabilities in the time you have available.
 
 - [x] I as an owner/creator of a certain to-do list can make a list private, so that
   only i can view it
+- [x] I as a user want to have a good experience visiting the app on mobile
 
-### Notes
+---
+## Running the app in production
 
-Preferable send a link to a hosted/running application and to the repository where the
-source code is available. Please unpublish or mark the repository as private after it
-has been reviewed. In the README.md of your submission please list the stories you've
-chosen to implement (your own ideas for stories will be appreciated too).
+Easiest is to use docker-compose:
+
+```bash
+docker-compose up
+```
+
+This will start the app on port 4000.
+A full example of how a docker-compose file could look like can be
+found [here](./docker-compose.yml).
+
+---
+## Running app for development
+
+### Pre-requisites
+
+- Node.js v18
+- npm
+- docker
+
+### Start background services
+
+```bash
+docker-compose up -d redis db
+```
+
+### Backend
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+This will start the backend on port 5000.
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm start
+```
+
+This will start the frontend on port 3000.
+
+---
+
+## Running app standalone to this repo
+
+```yaml
+version: "3"
+
+networks:
+  local:
+    driver: bridge
+
+services:
+  ubi-todo:
+    image: ghcr.io/albin-rohde/ui-todo:latest
+    container_name: ubi-todo.app
+    expose:
+      - 5000
+    networks:
+      - proxy
+    restart: unless-stopped
+    depends_on:
+      - ubi-todo.db
+      - ubi-todo.redis
+    environment:
+      - POSTGRES_USER=
+      - POSTGRES_PASSWORD=
+      - POSTGRES_DB=$
+      - POSTGRES_PORT=5432
+      - POSTGRES_HOST=ubi-todo.db
+      - REDIS_URL=redis://ubi-todo.redis:6379
+      - PORT=5000
+
+  ubi-todo.db:
+    image: postgres
+    container_name: ubi-todo.db
+    expose:
+      - 5432
+    networks:
+      - proxy
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=
+      - POSTGRES_PASSWORD=
+      - POSTGRES_DB=
+
+  ubi-todo.redis:
+    image: redis:latest
+    container_name: ubi-todo.redis
+    expose:
+      - 6379
+    networks:
+      - proxy
+    restart: unless-stopped
+    environment:
+      - REDIS_REPLICATION_MODE=master
+```
