@@ -21,7 +21,7 @@ export class UserFactory extends Factory<User> {
   protected attrs(): FactorizedAttrs<User> {
     return {
       username: faker.internet.userName(),
-      email: faker.internet.email(),
+      email: faker.internet.email().toLowerCase(),
       password: faker.internet.password(),
     }
   }

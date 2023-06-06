@@ -43,7 +43,7 @@ describe("User rest routes", () => {
       const user = await db.createQueryBuilder()
         .select("user")
         .from("user", "user")
-        .where("email = :email", { email: payload.email })
+        .where("email = :email", { email: payload.email.toLowerCase() })
         .getOne();
 
       expect(user).toBeDefined();
@@ -60,7 +60,7 @@ describe("User rest routes", () => {
         .set("Accept", "application/json")
         .expect(200, { ok: true, err: null, data: "ok" });
 
-      return request(server).post("/api/user")
+      await request(server).post("/api/user")
         .send(payload2)
         .set("Accept", "application/json")
         .expect(200, {

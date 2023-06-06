@@ -12,7 +12,7 @@ export class UserService {
   }
 
   public async createUser(userData: createUserInput): Promise<User> {
-    const userByEmail = await this.userRepository.findOne({ where: { email: userData.email } })
+    const userByEmail = await this.userRepository.findOne({ where: { email: userData.email.toLowerCase() } })
     if (userByEmail) {
       throw new ValidationError(
         "User with that email already exist.",
@@ -30,13 +30,13 @@ export class UserService {
     }
     const user = new User();
     user.username = userData.username;
-    user.email = userData.email;
+    user.email = userData.email.toLowerCase();
     user.password = await this.hashPassword(userData.password);
     return this.userRepository.save(user);
   }
 
   public async signIn(input: signInInput): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { email: input.email } })
+    const user = await this.userRepository.findOne({ where: { email: input.email.toLowerCase() } })
     if (!user) {
       throw new ValidationError(
         "User with that email does not exist.",
