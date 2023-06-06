@@ -4,7 +4,6 @@ import React, { useContext } from 'react';
 
 import TypographInput from '../../../components/TypographInput';
 import { TodoListContext } from '../../../contexts/TodoListContext';
-import { TodoListsContext, } from '../../../contexts/TodoListsContext';
 import useHttp from '../../../hooks/useHttp';
 
 import TodoItemsList from './TodoItemsList';
@@ -24,8 +23,12 @@ const ListNameContainer = styled(Box)({
 
 export const TodoList = (props: TodoListProps) => {
   const { sendRequest } = useHttp();
-  const { currentTodoList, setCurrentTodolist } = useContext(TodoListContext);
-  const { todoLists, setTodolists } = useContext(TodoListsContext);
+  const {
+    currentTodoList,
+    setCurrentTodolist,
+    todoLists,
+    setTodolists
+  } = useContext(TodoListContext);
 
   const handleNameChange = (text: string) => {
     if (!currentTodoList) {
