@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import PrimaryButton from '../../components/PrimaryButton';
-import { TodoListsContext } from '../../contexts/TodoListsContext';
+import { TodoListContext } from '../../contexts/TodoListContext';
 import { useAuth } from '../../hooks/useAuth';
 import useHttp from '../../hooks/useHttp';
 import { TodoList } from '../../types';
@@ -11,7 +11,7 @@ import { TodoList } from '../../types';
 
 function EmptyState() {
   const { loading } = useAuth({ redirectTo: '/signin' });
-  const { todoLists, setTodolists } = useContext(TodoListsContext);
+  const { todoLists, setTodolists } = useContext(TodoListContext);
   const { sendRequest: sendCreate } = useHttp();
   const navigate = useNavigate();
   const theme = useTheme();

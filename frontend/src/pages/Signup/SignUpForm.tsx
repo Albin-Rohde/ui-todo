@@ -9,7 +9,7 @@ import { styled } from '@mui/system';
 import React, { MouseEvent, useContext, useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
-import InforMessageBox from '../../components/InforMessageBox';
+import InfoMessageBox from '../../components/InfoMessageBox';
 import PrimaryButton from '../../components/PrimaryButton';
 import { UserContext } from '../../contexts/UserContext';
 import useHttp from '../../hooks/useHttp';
@@ -160,14 +160,14 @@ function SignUpForm() {
           {loading ? <CircularProgress size={24} color="inherit"/> : 'Sign up'}
         </PrimaryButton>
       </Box>
-      <InforMessageBox>
+      <InfoMessageBox>
         <Typography variant="body2">
           Already have an account? {' '}
           <MuiLink to="/signin" component={RouterLink} underline="hover">
             Sign in
           </MuiLink>.
         </Typography>
-      </InforMessageBox>
+      </InfoMessageBox>
     </Container>
   );
 }

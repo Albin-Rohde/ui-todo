@@ -10,7 +10,7 @@ import { getSubItems } from '../utils';
 
 const useSocketIO = () => {
   const { socket, setSocket, isConnected, setIsConnected } = useContext(SocketContext);
-  const { todoList, setTodolist } = useContext(TodoListContext)
+  const { currentTodoList, setCurrentTodolist } = useContext(TodoListContext)
   const { setTodoItems, setCursorPositions } = useContext(TodoItemContext);
   const baseUrl = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -40,8 +40,8 @@ const useSocketIO = () => {
       socket.connect();
 
       socket.on('todolist.list-updated', (data: TodoList) => {
-        if (todoList && data.id === todoList.id) {
-          setTodolist(data);
+        if (currentTodoList && data.id === currentTodoList.id) {
+          setCurrentTodolist(data);
         }
       });
 

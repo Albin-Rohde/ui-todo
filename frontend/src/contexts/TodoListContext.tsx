@@ -3,11 +3,19 @@ import React, { createContext, useState } from 'react';
 import { TodoList } from '../types';
 
 const TodoListContext = createContext<{
-  todoList: TodoList | null;
-  setTodolist: React.Dispatch<React.SetStateAction<TodoList | null>>
+  currentTodoList: TodoList | null;
+  setCurrentTodolist: React.Dispatch<React.SetStateAction<TodoList | null>>
+  recentLists: TodoList[];
+  setRecentlists: React.Dispatch<React.SetStateAction<TodoList[]>>
+  todoLists: TodoList[];
+  setTodolists: React.Dispatch<React.SetStateAction<TodoList[]>>
 }>({
-  todoList: null,
-  setTodolist: () => null,
+  currentTodoList: null,
+  setCurrentTodolist: () => null,
+  recentLists: [],
+  setRecentlists: () => [],
+  todoLists: [],
+  setTodolists: () => [],
 });
 
 interface UserContextProps {
@@ -15,10 +23,20 @@ interface UserContextProps {
 }
 
 const TodoListContextProvider: React.FC<UserContextProps> = ({ children }) => {
-  const [todoList, setTodolist] = useState<TodoList | null>(null);
+  const [currentTodoList, setCurrentTodolist] = useState<TodoList | null>(null);
+  const [recentLists, setRecentlists] = useState<TodoList[]>([]);
+  const [todoLists, setTodolists] = useState<TodoList[]>([]);
 
   return (
-    <TodoListContext.Provider value={{ todoList, setTodolist }}>
+    <TodoListContext.Provider
+      value={{
+        currentTodoList,
+        setCurrentTodolist,
+        recentLists,
+        setRecentlists,
+        todoLists,
+        setTodolists,
+      }}>
       {children}
     </TodoListContext.Provider>
   );

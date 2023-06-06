@@ -5,7 +5,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import { IconButton, ListItemIcon, Tooltip } from '@mui/material';
 import React from 'react';
 
-import { TodoList } from '../types';
+import { TodoList } from '../../../types';
 
 interface TodoListOptionsProps {
   todoList: TodoList;

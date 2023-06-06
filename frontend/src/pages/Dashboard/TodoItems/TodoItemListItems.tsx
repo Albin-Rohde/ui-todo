@@ -1,7 +1,7 @@
 import { Divider } from '@mui/material';
 import React from 'react';
 
-import { TodoItem } from '../../types';
+import { TodoItem } from '../../../types';
 
 import { TodoItemRow } from './TodoItemRow';
 
