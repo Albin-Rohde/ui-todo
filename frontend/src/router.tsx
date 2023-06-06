@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useRoutes } from 'react-router-dom';
 
-import { RecentListsContextProvider } from './contexts/RecentListsContext';
 import { SocketContextProvider } from './contexts/SocketContext';
 import { TodoItemContextProvider } from './contexts/TodoItemsContext';
 import { TodoListContextProvider } from './contexts/TodoListContext'
@@ -17,11 +16,9 @@ export const routes = [
     path: '/',
     element: (
       <TodoListsContextProvider>
-        <RecentListsContextProvider>
-          <Dashboard>
-            <EmptyState/>
-          </Dashboard>
-        </RecentListsContextProvider>
+        <Dashboard>
+          <EmptyState/>
+        </Dashboard>
       </TodoListsContextProvider>
     ),
   },
@@ -29,17 +26,15 @@ export const routes = [
     path: '/list/:id',
     element: (
       <TodoListsContextProvider>
-        <RecentListsContextProvider>
-          <TodoListContextProvider>
-            <TodoItemContextProvider>
-              <SocketContextProvider>
-                <Dashboard>
-                  <ListViewState/>
-                </Dashboard>
-              </SocketContextProvider>
-            </TodoItemContextProvider>
-          </TodoListContextProvider>
-        </RecentListsContextProvider>
+        <TodoListContextProvider>
+          <TodoItemContextProvider>
+            <SocketContextProvider>
+              <Dashboard>
+                <ListViewState/>
+              </Dashboard>
+            </SocketContextProvider>
+          </TodoItemContextProvider>
+        </TodoListContextProvider>
       </TodoListsContextProvider>
     ),
   },
