@@ -17,7 +17,7 @@ function ListViewState() {
   const { loading } = useAuth({ redirectTo: '/signin' });
   const { id } = useParams();
   const { sendRequest, loading: fetchListLoading } = useHttp();
-  const { setTodolist } = useContext(TodoListContext);
+  const { setCurrentTodolist } = useContext(TodoListContext);
   const { setTodoItems } = useContext(TodoItemContext);
   const [notFound, setNotFound] = useState(false);
   const [prevId, setPrevId] = useState<string | null>(null);
@@ -33,10 +33,10 @@ function ListViewState() {
       });
       if (response.ok && response.data) {
         setNotFound(false);
-        setTodolist(response.data);
+        setCurrentTodolist(response.data);
       }
       if (!response.ok && response.err?.name === 'NotFoundError') {
-        setTodolist(null);
+        setCurrentTodolist(null);
         setNotFound(true);
       }
     };

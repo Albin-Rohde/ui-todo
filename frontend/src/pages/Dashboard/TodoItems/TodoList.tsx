@@ -24,20 +24,20 @@ const ListNameContainer = styled(Box)({
 
 export const TodoList = (props: TodoListProps) => {
   const { sendRequest } = useHttp();
-  const { todoList, setTodolist } = useContext(TodoListContext);
+  const { currentTodoList, setCurrentTodolist } = useContext(TodoListContext);
   const { todoLists, setTodolists } = useContext(TodoListsContext);
 
   const handleNameChange = (text: string) => {
-    if (!todoList) {
+    if (!currentTodoList) {
       return;
     }
 
-    setTodolist({
-      ...todoList,
+    setCurrentTodolist({
+      ...currentTodoList,
       name: text,
     });
     setTodolists(todoLists?.map((list) => {
-      if (list.id === todoList.id) {
+      if (list.id === currentTodoList.id) {
         return {
           ...list,
           name: text,
@@ -48,15 +48,15 @@ export const TodoList = (props: TodoListProps) => {
   };
   const handleSaveClick = async () => {
     await sendRequest({
-      path: '/todo-list/' + todoList?.publicId,
+      path: '/todo-list/' + currentTodoList?.publicId,
       method: 'PUT',
       body: {
-        name: todoList?.name,
+        name: currentTodoList?.name,
       }
     })
   };
 
-  if (props.loading || !todoList) {
+  if (props.loading || !currentTodoList) {
     return (
       <ListNameContainer
         sx={{ height: props.isMobile ? 'calc(100dvh - 65px)' : 'inherit' }}>
@@ -70,7 +70,7 @@ export const TodoList = (props: TodoListProps) => {
       <ListNameContainer
         sx={{ height: props.isMobile ? 'calc(100dvh - 65px)' : 'inherit' }}>
         <TypographInput
-          text={todoList.name}
+          text={currentTodoList.name}
           fontSize={props.isMobile ? '1.4rem' : '2rem'}
           onChange={handleNameChange}
           onBlur={handleSaveClick}
