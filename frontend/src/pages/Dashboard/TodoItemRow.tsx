@@ -8,8 +8,8 @@ import React, { useContext } from 'react';
 import { useParams } from 'react-router-dom';
 
 import TodoItemCheckbox from '../../components/TodoItemCheckbox';
+import { SocketContext } from '../../contexts/SocketContext';
 import { TodoItemContext } from '../../contexts/TodoItemsContext';
-import useHttp from '../../hooks/useHttp';
 import { TodoItem } from '../../types';
 
 interface TodoItemRowProps {
@@ -24,18 +24,18 @@ interface TodoItemRowProps {
 
 export const TodoItemRow = (props: TodoItemRowProps) => {
   const { id } = useParams<{ id: string }>();
-  const { sendRequest } = useHttp();
   const { setTodoItems } = useContext(TodoItemContext);
+  const { socket } = useContext(SocketContext);
 
   const handleDeleteItemClick = async (todoItem: TodoItem) => {
     setTodoItems((prev: TodoItem[]) => {
       return prev.filter((item) => item.id !== todoItem.id);
     });
-    await sendRequest({
-      path: `/todo-list/${id}/todo-item/${todoItem.id}`,
-      method: 'DELETE',
+    socket?.emit('todoitem.delete-todo-item', {
+      id: todoItem.id,
+      listId: id,
     });
-  }
+  };
 
   const getChevron = () => {
     if (props.isExpanded) {
