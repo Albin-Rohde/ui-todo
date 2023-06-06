@@ -11,6 +11,7 @@ interface TypographInputProps {
   textAlign: 'left' | 'center' | 'right';
   marginTop?: string;
   inputRef?: React.RefObject<HTMLInputElement>;
+  disabled?: boolean;
 }
 
 const TypographInput = (props: TypographInputProps) => {
@@ -22,6 +23,7 @@ const TypographInput = (props: TypographInputProps) => {
       onBlur={props.onBlur || (() => null)}
       onFocus={props.onFocus || (() => null)}
       onMouseUp={props.onMouseUp || (() => null)}
+      disabled={props.disabled}
       sx={{
         textAlign: props.textAlign,
         margin: 0,
