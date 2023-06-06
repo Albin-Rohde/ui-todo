@@ -1,8 +1,7 @@
-import { Box } from '@mui/material';
+import { useMediaQuery, useTheme } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import SidePanel from '../../components/SidePanel';
 import { TodoItemContext } from '../../contexts/TodoItemsContext';
 import { TodoListContext } from '../../contexts/TodoListContext';
 import { useAuth } from '../../hooks/useAuth';
@@ -14,7 +13,7 @@ import { TodoItem } from '../../types';
 import NotFoundState from './NotFoundState';
 import { TodoList } from './TodoList';
 
-function ListView() {
+function ListViewState() {
   const { loading } = useAuth({ redirectTo: '/signin' });
   const { id } = useParams();
   const { sendRequest, loading: fetchListLoading } = useHttp();
@@ -23,6 +22,8 @@ function ListView() {
   const [notFound, setNotFound] = useState(false);
   const [prevId, setPrevId] = useState<string | null>(null);
   const { socket, isConnected } = useSocketIO();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
     const fetchList = async () => {
@@ -73,16 +74,19 @@ function ListView() {
     setPrevId(publicId);
   }
 
+  if (notFound) {
+    return (
+      <>
+        <NotFoundState isMobile={isMobile}/>
+      </>
+    );
+  }
+
   return (
-    <Box display="flex">
-      <SidePanel/>
-      {notFound ? <NotFoundState/> : (
-        <TodoList
-          loading={fetchListLoading || loading}
-        />
-      )}
-    </Box>
+    <>
+      <TodoList loading={fetchListLoading || loading} isMobile={isMobile}/>
+    </>
   );
 }
 
-export default ListView;
+export default ListViewState;

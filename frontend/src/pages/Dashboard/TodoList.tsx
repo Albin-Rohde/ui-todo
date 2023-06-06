@@ -11,6 +11,7 @@ import TodoItemsList from './TodoItemsList';
 
 interface TodoListProps {
   loading: boolean;
+  isMobile: boolean;
 }
 
 const ListNameContainer = styled(Box)({
@@ -57,24 +58,26 @@ export const TodoList = (props: TodoListProps) => {
 
   if (props.loading || !todoList) {
     return (
-      <ListNameContainer>
-        <Divider sx={{ width: '100%', marginTop: 11, marginBottom: 2 }}/>
-        <CircularProgress sx={{ marginTop: 8 }}/>
+      <ListNameContainer
+        sx={{ height: props.isMobile ? 'calc(100dvh - 65px)' : 'inherit' }}>
+        <CircularProgress sx={{ marginTop: 15 }}/>
       </ListNameContainer>
     );
   }
 
   return (
     <>
-      <ListNameContainer>
+      <ListNameContainer
+        sx={{ height: props.isMobile ? 'calc(100dvh - 65px)' : 'inherit' }}>
         <TypographInput
           text={todoList.name}
-          fontSize={'2rem'}
+          fontSize={props.isMobile ? '1.4rem' : '2rem'}
           onChange={handleNameChange}
           onBlur={handleSaveClick}
           textAlign={'center'}
         />
-        <Divider sx={{ width: '100%', marginTop: 2, marginBottom: 0 }}/>
+        <Divider
+          sx={{ width: '100%', marginTop: props.isMobile ? 1 : 2, marginBottom: 0 }}/>
         <Box sx={{
           display: 'flex',
           width: '100%',

@@ -6,8 +6,9 @@ import { SocketContextProvider } from './contexts/SocketContext';
 import { TodoItemContextProvider } from './contexts/TodoItemsContext';
 import { TodoListContextProvider } from './contexts/TodoListContext'
 import { TodoListsContextProvider } from './contexts/TodoListsContext'
+import { Dashboard } from './pages/Dashboard/Dashboard';
 import EmptyState from './pages/Dashboard/EmptyState';
-import ListView from './pages/Dashboard/TodoListView';
+import ListViewState from './pages/Dashboard/ListViewState';
 import SignIn from './pages/SignIn/SignIn';
 import Signup from './pages/Signup/Signup';
 
@@ -17,7 +18,9 @@ export const routes = [
     element: (
       <TodoListsContextProvider>
         <RecentListsContextProvider>
-          <EmptyState/>
+          <Dashboard>
+            <EmptyState/>
+          </Dashboard>
         </RecentListsContextProvider>
       </TodoListsContextProvider>
     ),
@@ -30,7 +33,9 @@ export const routes = [
           <TodoListContextProvider>
             <TodoItemContextProvider>
               <SocketContextProvider>
-                <ListView/>
+                <Dashboard>
+                  <ListViewState/>
+                </Dashboard>
               </SocketContextProvider>
             </TodoItemContextProvider>
           </TodoListContextProvider>

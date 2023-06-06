@@ -1,9 +1,8 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useMediaQuery, useTheme } from '@mui/material';
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import PrimaryButton from '../../components/PrimaryButton';
-import SidePanel from '../../components/SidePanel';
 import { TodoListsContext } from '../../contexts/TodoListsContext';
 import { useAuth } from '../../hooks/useAuth';
 import useHttp from '../../hooks/useHttp';
@@ -15,6 +14,8 @@ function EmptyState() {
   const { todoLists, setTodolists } = useContext(TodoListsContext);
   const { sendRequest: sendCreate } = useHttp();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   if (loading) {
     return <></>;
@@ -36,25 +37,27 @@ function EmptyState() {
   }
 
   return (
-    <Box display="flex">
-      <SidePanel/>
+    <Box sx={{
+      backgroundColor: '#eaeaea',
+      flex: '1 1 auto',
+      minHeight: isMobile ? 'calc(100dvh - 65px)' : 'inherit',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center'
+    }}>
       <Box sx={{
-        backgroundColor: '#eaeaea',
-        flex: '1 1 auto',
-        height: '100vh',
         display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
+        flexDirection: 'column',
+        alignItems: 'center',
+        textAlign: 'center'
       }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <Typography variant="h4" sx={{ color: '#007afe', mb: 2 }}>
-            Create or open a list to get started!
-          </Typography>
-          <Box sx={{ display: 'flex' }}>
-            <PrimaryButton onClick={() => createTodoList()}>
-              Create a list
-            </PrimaryButton>
-          </Box>
+        <Typography variant="h4" sx={{ color: '#007afe', mb: 2 }}>
+          Create or open a list to get started!
+        </Typography>
+        <Box sx={{ display: 'flex' }}>
+          <PrimaryButton onClick={() => createTodoList()}>
+            Create a list
+          </PrimaryButton>
         </Box>
       </Box>
     </Box>
