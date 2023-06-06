@@ -7,10 +7,11 @@ import { IconButton, ListItem, ListItemIcon, Tooltip, Typography } from '@mui/ma
 import React, { useContext } from 'react';
 import { useParams } from 'react-router-dom';
 
-import TodoItemCheckbox from '../../components/TodoItemCheckbox';
-import { SocketContext } from '../../contexts/SocketContext';
-import { TodoItemContext } from '../../contexts/TodoItemsContext';
-import { TodoItem } from '../../types';
+import { SocketContext } from '../../../contexts/SocketContext';
+import { TodoItemContext } from '../../../contexts/TodoItemsContext';
+import { TodoItem } from '../../../types';
+
+import TodoItemCheckbox from './TodoItemCheckbox';
 
 interface TodoItemRowProps {
   item: TodoItem;

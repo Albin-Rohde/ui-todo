@@ -3,11 +3,11 @@ import { Box, CircularProgress, List, ListItem, ListItemText, } from '@mui/mater
 import React, { useContext, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { TodoListsContext } from '../contexts/TodoListsContext';
-import useHttp from '../hooks/useHttp';
-import { TodoList } from '../types';
+import SecondaryButton from '../../../components/SecondaryButton';
+import { TodoListsContext } from '../../../contexts/TodoListsContext';
+import useHttp from '../../../hooks/useHttp';
+import { TodoList } from '../../../types';
 
-import SecondaryButton from './SecondaryButton';
 import { TodoListOptions } from './TodoListOptions';
 
 

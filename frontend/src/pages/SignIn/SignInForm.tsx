@@ -3,7 +3,7 @@ import { styled } from '@mui/system';
 import React, { useContext, useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
-import InforMessageBox from '../../components/InforMessageBox';
+import InfoMessageBox from '../../components/InfoMessageBox';
 import PrimaryButton from '../../components/PrimaryButton';
 import { UserContext } from '../../contexts/UserContext';
 import useHttp from '../../hooks/useHttp';
@@ -116,7 +116,7 @@ function SignInForm() {
           Sign in
         </PrimaryButton>
       </Box>
-      <InforMessageBox>
+      <InfoMessageBox>
         <Typography variant="body2">
           {'Don\'t have an account? '}
           <MuiLink to="/signup" component={RouterLink} underline="hover">
@@ -124,7 +124,7 @@ function SignInForm() {
           </MuiLink>.
         </Typography>
 
-      </InforMessageBox>
+      </InfoMessageBox>
     </Container>
   );
 }

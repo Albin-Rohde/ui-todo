@@ -4,8 +4,8 @@ import { styled } from '@mui/system';
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { UserContext } from '../contexts/UserContext';
-import useHttp from '../hooks/useHttp';
+import { UserContext } from '../../../contexts/UserContext';
+import useHttp from '../../../hooks/useHttp';
 
 const UserProfileContainer = styled(Box)(({ theme }) => ({
   display: 'flex',

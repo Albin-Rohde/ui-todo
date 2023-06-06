@@ -10,7 +10,8 @@ import { styled } from '@mui/system';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import AppName from './AppName';
+import AppName from '../../../components/AppName';
+
 import ListOfRecentLists from './ListOfRecentLists';
 import ListOfTodoLists from './ListOfTodoLists';
 import UserProfile from './UserProfile';

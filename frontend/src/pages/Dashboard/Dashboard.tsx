@@ -1,9 +1,9 @@
 import { Box, useMediaQuery, useTheme } from '@mui/material';
 import React, { useState } from 'react';
 
-import SidePanel from '../../components/SidePanel';
+import SidePanel from './SidePanel/SidePanel';
+import { TopBar } from './SidePanel/TopBar';
 
-import { TopBar } from './components/TopBar';
 
 interface DashboardProps {
   children: React.ReactNode;

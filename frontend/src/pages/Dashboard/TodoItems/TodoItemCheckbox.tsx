@@ -2,13 +2,13 @@ import { Box, Checkbox } from '@mui/material';
 import React, { useContext, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { SocketContext } from '../contexts/SocketContext';
-import { TodoItemContext } from '../contexts/TodoItemsContext';
-import { TodoItem } from '../types';
-import { getSubItems } from '../utils';
+import { FakeCursor } from '../../../components/FakeCursor';
+import TypographInput from '../../../components/TypographInput';
+import { SocketContext } from '../../../contexts/SocketContext';
+import { TodoItemContext } from '../../../contexts/TodoItemsContext';
+import { TodoItem } from '../../../types';
+import { getSubItems } from '../../../utils';
 
-import { FakeCursor } from './FakeCursor';
-import TypographInput from './TypographInput';
 
 interface TodoItemCheckboxProps {
   item: TodoItem,

@@ -11,7 +11,7 @@ import * as t from '../../types';
 import { TodoItem } from '../../types';
 
 import NotFoundState from './NotFoundState';
-import { TodoList } from './TodoList';
+import { TodoList } from './TodoItems/TodoList';
 
 function ListViewState() {
   const { loading } = useAuth({ redirectTo: '/signin' });

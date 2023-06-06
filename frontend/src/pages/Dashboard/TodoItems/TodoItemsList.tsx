@@ -3,11 +3,11 @@ import { Box, Divider, FormControlLabel, List, ListItem, Switch, } from '@mui/ma
 import React, { useContext } from 'react';
 import { useParams } from 'react-router-dom';
 
-import SecondaryButton from '../../components/SecondaryButton';
-import { SocketContext } from '../../contexts/SocketContext';
-import { TodoItemContext } from '../../contexts/TodoItemsContext';
-import useHttp from '../../hooks/useHttp';
-import { TodoItem } from '../../types';
+import SecondaryButton from '../../../components/SecondaryButton';
+import { SocketContext } from '../../../contexts/SocketContext';
+import { TodoItemContext } from '../../../contexts/TodoItemsContext';
+import useHttp from '../../../hooks/useHttp';
+import { TodoItem } from '../../../types';
 
 import { TodoItemListItems } from './TodoItemListItems';
 

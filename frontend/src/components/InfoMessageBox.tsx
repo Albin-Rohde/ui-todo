@@ -16,7 +16,7 @@ interface PrimaryButtonProps extends ButtonProps {
   children: React.ReactNode;
 }
 
-const InforMessageBox: React.FC<PrimaryButtonProps> = ({ children }) => {
+const InfoMessageBox: React.FC<PrimaryButtonProps> = ({ children }) => {
   return (
     <CustomBox>
       {children}
@@ -24,4 +24,4 @@ const InforMessageBox: React.FC<PrimaryButtonProps> = ({ children }) => {
   );
 };
 
-export default InforMessageBox;
+export default InfoMessageBox;
