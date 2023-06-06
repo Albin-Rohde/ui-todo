@@ -46,6 +46,29 @@ export const handleNotifyNewItem = (socket: Socket) => async (data: {
   }
 }
 
+export const handleDeleteItem = (socket: Socket) => async (data: {
+  listId: string,
+  id: number,
+}) => {
+  const todoItemService = new TodoItemService();
+  const { listId, id } = data;
+
+  try {
+    const item = await todoItemService.getById(socket.request.session.user, id);
+    await todoItemService.delete({
+      user: socket.request.session.user,
+      publicListId: listId,
+      id,
+    });
+    socket.broadcast.to(listId).emit("todoitem.item-deleted", todoItemService.responseFormat(item));
+  } catch (err: any) {
+    if (err?.name === "EntityNotFoundError") {
+      return;
+    }
+    console.log(err);
+  }
+}
+
 export const handleUpdateCursorPos = (socket: Socket) => async (data: {
   listId: string,
   itemId: number,
@@ -86,6 +109,10 @@ const listeners = [
   {
     event: "todoitem.notify-new-todo-item",
     handler: handleNotifyNewItem,
+  },
+  {
+    event: "todoitem.delete-todo-item",
+    handler: handleDeleteItem,
   },
   {
     event: "todoitem.update-cursor-pos",

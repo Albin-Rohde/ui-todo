@@ -13,12 +13,19 @@ const AppName = styled(Typography)(({ style }) => ({
 interface AppNameProps {
   styles?: React.CSSProperties;
   animate?: boolean;
+  onClick?: () => void;
 }
 
-const AppNameComponent: React.FC<AppNameProps> = ({ styles, animate }) => {
+const AppNameComponent: React.FC<AppNameProps> = ({ styles, animate, onClick }) => {
   const [animationFinished, setAnimationFinished] = useState<boolean>(false);
 
-  return <AppName style={styles}>
+  return <AppName
+    style={styles}
+    onClick={() => onClick && onClick()}
+    sx={{
+      cursor: onClick ? 'pointer' : 'default',
+    }}
+  >
     {animationFinished || !animate ?
       'Ubi-to-do ' :
       <TypeAnimation

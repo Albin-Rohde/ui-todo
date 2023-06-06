@@ -7,7 +7,7 @@ import { TodoItemRow } from './TodoItemRow';
 
 interface TodoItemListItemsProps {
   todoItems: TodoItem[];
-  handleAddItemClick: (item: TodoItem) => void;
+  handleAddItemClick: (item?: TodoItem) => void;
 }
 
 export const TodoItemListItems = (props: TodoItemListItemsProps) => {
@@ -19,6 +19,11 @@ export const TodoItemListItems = (props: TodoItemListItemsProps) => {
     } else {
       setExpandedItems((prev) => [...prev, itemId]);
     }
+  }
+
+  const handleAddItemClick = (item?: TodoItem) => {
+    props.handleAddItemClick(item);
+    item && handleExpand(item.id);
   }
 
   const topLevelItems: TodoItem[] = [];
@@ -66,7 +71,7 @@ export const TodoItemListItems = (props: TodoItemListItemsProps) => {
             <TodoItemRow
               item={item}
               key={item.id}
-              handleAddItemClick={() => props.handleAddItemClick(item)}
+              handleAddItemClick={() => handleAddItemClick(item)}
               handleCollapse={() => handleExpand(item.id)}
               isExpanded={isExpanded}
               hasSubItems={hasSubItems}
@@ -91,7 +96,7 @@ export const TodoItemListItems = (props: TodoItemListItemsProps) => {
           hasSubItems={hasSubitems}
           handleCollapse={() => handleExpand(item.id)}
           isExpanded={isExpanded}
-          handleAddItemClick={() => props.handleAddItemClick(item)}
+          handleAddItemClick={() => handleAddItemClick(item)}
           count={getTotalCount(item.id)}
         />
         {hasSubitems && isExpanded && renderSubItems(item.id)}

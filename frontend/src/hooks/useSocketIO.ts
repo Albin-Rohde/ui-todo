@@ -70,6 +70,18 @@ const useSocketIO = () => {
         });
       });
 
+      socket.on('todoitem.item-deleted', (data: TodoItem) => {
+        setTodoItems((prev: TodoItem[]) => {
+          const subItems = getSubItems(data, prev);
+          return prev.filter((item) => {
+            if (item.id === data.id) {
+              return false;
+            }
+            return !subItems.includes(item);
+          });
+        });
+      });
+
       socket?.on('todoitem.cursor-pos-updated', (data: CursorPosition) => {
         setCursorPositions((prev) => {
           // remove old cursor position

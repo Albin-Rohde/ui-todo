@@ -1,6 +1,7 @@
 import { Box, Divider, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import AppName from './AppName';
 import ListOfRecentLists from './ListOfRecentLists';
@@ -16,6 +17,7 @@ const SubHeading = styled(Typography)(({ theme }) => ({
 }));
 
 const SidePanel = () => {
+  const navigate = useNavigate();
   return (
     <Box
       width={300}
@@ -27,7 +29,7 @@ const SidePanel = () => {
       boxShadow="0px 2px 4px rgba(0, 0, 0, 0.1)"
     >
       <Box marginLeft={1.5} marginTop={1} marginBottom={1}>
-        <AppName styles={{ fontSize: '3em' }}/>
+        <AppName styles={{ fontSize: '3em' }} onClick={() => navigate('/')}/>
       </Box>
       <Divider/>
       <Box marginTop={2} marginLeft={2}>

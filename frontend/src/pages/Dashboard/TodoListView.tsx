@@ -11,6 +11,7 @@ import useSocketIO from '../../hooks/useSocketIO';
 import * as t from '../../types';
 import { TodoItem } from '../../types';
 
+import NotFoundState from './NotFoundState';
 import { TodoList } from './TodoList';
 
 function ListView() {
@@ -75,7 +76,7 @@ function ListView() {
   return (
     <Box display="flex">
       <SidePanel/>
-      {notFound ? <h1>Could not find list</h1> : (
+      {notFound ? <NotFoundState/> : (
         <TodoList
           loading={fetchListLoading || loading}
         />

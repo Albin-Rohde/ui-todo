@@ -9,7 +9,7 @@ import {
 } from "../../test-utils/factories";
 import { faker } from "@faker-js/faker";
 
-describe("User rest routes", () => {
+describe("Todolist rest routes", () => {
   let server: Server;
 
   beforeAll(async () => {
