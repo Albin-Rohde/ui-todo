@@ -37,7 +37,7 @@ export class TodoItemService {
 
   public async create(input: CreateTodoItemInput) {
     const list = await this.todoListService.getByPublicId(input.publicListId, input.user)
-    if (list.readonly) {
+    if (list.readonly && input.user.id !== list.userId) {
       throw new Error("List is readonly");
     }
     const item = new TodoItem();
@@ -61,7 +61,7 @@ export class TodoItemService {
 
   public async update(input: UpdateTodoItemInput) {
     const list = await this.todoListService.getByPublicId(input.publicListId, input.user)
-    if (list.readonly) {
+    if (list.readonly && input.user.id !== list.userId) {
       throw new Error("List is readonly");
     }
     const item = await this.todoItemRepository.findOneOrFail({ where: { id: input.id } });
@@ -95,7 +95,7 @@ export class TodoItemService {
   public async delete(input: DeleteTodoItemInput) {
     const { id, publicListId } = input;
     const list = await this.todoListService.getByPublicId(publicListId, input.user)
-    if (list.readonly) {
+    if (list.readonly && input.user.id !== list.userId) {
       throw new Error("List is readonly");
     }
     const item = await this.todoItemRepository.findOneOrFail({
