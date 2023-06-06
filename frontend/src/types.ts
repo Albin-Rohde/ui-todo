@@ -32,6 +32,7 @@ export type TodoList = {
   readonly: boolean,
   private: boolean,
   createdAt: string,
+  userId: number,
 }
 
 export type TodoItem = {

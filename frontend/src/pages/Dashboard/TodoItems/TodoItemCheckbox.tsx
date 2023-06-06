@@ -6,6 +6,8 @@ import { FakeCursor } from '../../../components/FakeCursor';
 import TypographInput from '../../../components/TypographInput';
 import { SocketContext } from '../../../contexts/SocketContext';
 import { TodoItemContext } from '../../../contexts/TodoItemsContext';
+import { TodoListContext } from '../../../contexts/TodoListContext';
+import { UserContext } from '../../../contexts/UserContext';
 import { TodoItem } from '../../../types';
 import { getSubItems } from '../../../utils';
 
@@ -18,9 +20,13 @@ interface TodoItemCheckboxProps {
 
 const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
   const { setTodoItems } = useContext(TodoItemContext)
+  const { currentTodoList } = useContext(TodoListContext)
+  const { user } = useContext(UserContext);
   const { id } = useParams()
   const { socket } = useContext(SocketContext);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const isReadOnly = currentTodoList && currentTodoList.readonly && currentTodoList.userId !== user?.id
 
   const sendCursorPos = (event: React.ChangeEvent | React.MouseEvent) => {
     const input = event?.target as HTMLInputElement;
@@ -94,6 +100,7 @@ const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
         sx={{ height: '30px', marginTop: '0px', paddingTop: 0, paddingBottom: 0 }}
         checked={props.item.completed}
         onClick={handleCheckboxClick}
+        disabled={isReadOnly || undefined}
       />
       <Box sx={{
         display: 'flex',
@@ -109,6 +116,7 @@ const TodoItemCheckbox = (props: TodoItemCheckboxProps) => {
           marginTop="0px"
           inputRef={inputRef}
           onMouseUp={handleMouseUp}
+          disabled={isReadOnly || undefined}
         />
         <FakeCursor
           item={props.item}
