@@ -1,5 +1,9 @@
 # ui-todo ![test-backend](https://github.com/albin-rohde/ui-todo/actions/workflows/test-backend.yml/badge.svg) ![lint-backend](https://github.com/albin-rohde/ui-todo/actions/workflows/lint-backend.yml/badge.svg) ![lint-frontend](https://github.com/albin-rohde/ui-todo/actions/workflows/lint-frontend.yml/badge.svg)
 
+Hosted on [https://ubi-to-do.rohde.se/](https://ubi-to-do.rohde.se/)
+
+![status](https://status.rohde.se/api/badge/10/status)
+
 ## Stories completed
 
 Stories with a checkmark is completed.
